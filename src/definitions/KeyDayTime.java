@@ -1,8 +1,8 @@
 package definitions;
 
 public class KeyDayTime implements Comparable<KeyDayTime>{
-Integer Day = null;
-Integer Timeslot = null;
+public Integer Day = null;
+public Integer Timeslot = null;
 
 public KeyDayTime(int day_in, int time_in) {
 	Day = day_in;

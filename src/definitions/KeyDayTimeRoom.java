@@ -8,9 +8,9 @@ package definitions;
  *
  */
 public class KeyDayTimeRoom implements Comparable<KeyDayTimeRoom>{
-Integer Day = null;
-Integer Timeslot = null;
-Room assignedRoom = null;
+public Integer Day = null;
+public Integer Timeslot = null;
+public Room assignedRoom = null;
 
 public KeyDayTimeRoom(int day_in, int time_in, Room room_in) {
 	Day = day_in;

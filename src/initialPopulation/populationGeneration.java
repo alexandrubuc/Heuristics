@@ -41,7 +41,9 @@ public class populationGeneration {
 	 */
 	
 	 /**
-	  *  TO DO : initialize all lists below
+	  * 				!!!!!!!!!!!!!!!!!!!!
+	  *  TO DO : initialize all lists below with the right size!!!
+	  *   				!!!!!!!!!!!!!!!!!!!!
 	  */
 	 static List<Curriculum> listCurricula = new ArrayList<>();
 	 static List<Course> listCourses = new ArrayList<>();
@@ -52,8 +54,10 @@ public class populationGeneration {
 	 static Map<KeyDayTime,List<Integer/*TeacherID*/>> tabuTimeslot_teacher = new HashMap<>();
 	 static Map<KeyDayTime,List<Curriculum>> tabuTimeslot_curriculum = new HashMap<>();
 	 
-	 
-
+	 static Map<KeyDayTimeRoom, Double> timeslotRoom_g_jk_map = new HashMap<>();
+	 static Map<Course, List<Room>> course_rooms_map = new HashMap<>();
+	 static Map<Course, List<Integer>> course_day_map = new HashMap<>();
+     //static Map<KeyDayTime, List<Curriculum>> soft_const_4_list = new HashMap<>(); 
 	 
 	 static Integer aps = 0;
 	 static Integer apd = 0;
@@ -217,6 +221,88 @@ public class populationGeneration {
 			 selectedCourse = tieCourses_apd.get(0);
 		 }
 		 
-	}
-
+		 /***************** Assign the course according to HR 2 *****************/
+		 /***************** select a period among all available ones that is least likely to be used by other unfinished courses at later steps *****************/
+		 
+		 Course[] chosenCourse = new Course[1];
+		 chosenCourse[0] = selectedCourse;
+		 
+		 // for each available period-room pair choose the pair with the smallest value of g(j,k) = k_1 * uac_i_j(X) + k_2 * Delta_f_s(i,j,k)
+		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue().equals(null)).forEach( (entry) -> {
+			    //check for feasibility of entry, where teacher or curriculum banned
+			    int Day = entry.getKey().getDay();
+				int Timeslot = entry.getKey().getTimeslot();
+				KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
+				if (tabuTimeslot_teacher.get(kdt).contains(chosenCourse[0].TeacherID) == false) {
+					//teacher has not been banned yet, check if curricula bans for timeslot contain any curriculum to which the course belongs.
+					if (Collections.disjoint(tabuTimeslot_curriculum.get(kdt), chosenCourse[0].belongsToCurricula)) {
+						//feasible insertion, check value of g(j,k) and add it to map (don't assign the course, just add to map kdtr -> g(j,k))
+						
+						int[] uac_ij = new int[1];
+						uac_ij[0] = 0;
+						//count courses with same teacher
+						uac_ij[0] = (int) listCourses.stream().filter(curso -> curso.TeacherID == chosenCourse[0].TeacherID).count();
+						// count courses from same curricula * number of unfinished lectures of that course
+						chosenCourse[0].belongsToCurricula.forEach( curriculum -> {
+							curriculum.coursesThatBelongToCurr.forEach(course_in_curr -> {
+								uac_ij[0] += course_in_curr.numberOfUnassignedLectures;
+							});
+						});
+						
+						//calculate soft penalties
+						int[] soft_penalty = new int[1];
+						soft_penalty[0] = 0;
+						
+						//S1 enrolled students - room capacity  -> konstante a_1 = 1
+					    int[] enrolledStudents = new int[1];
+						enrolledStudents[0] = 0;
+						
+						chosenCourse[0].belongsToCurricula.forEach( curr -> {
+							enrolledStudents[0] += curr.numberOfStudents;
+						});
+						if (enrolledStudents[0] > entry.getKey().getRoom().getRoomCapacity()) {
+							soft_penalty[0] += 1 * (enrolledStudents[0] - entry.getKey().getRoom().getRoomCapacity());
+						}
+						
+						//S2 room stability -> konstante a_2 = 1
+						soft_penalty[0] += (course_rooms_map.entrySet().stream().count() - 1);
+						
+						//S3 minimum working days -> konstante a_3 = 5
+						if (course_day_map.get(chosenCourse[0]).size() < chosenCourse[0].minWorkDays) {
+						soft_penalty[0] += 5 * (course_day_map.get(chosenCourse[0]).size() - chosenCourse[0].minWorkDays);
+						}
+						
+						//S4 curriculum compactness -> konstante a_4 = 2
+						
+						//check only previous timeslot, all other ones are the same
+						Map<Integer, List<Curriculum>> timeSlot_Curricula = new HashMap<>();
+						
+						if (Timeslot>1 ){
+					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot - 1).forEach( timeRoom -> {
+					    	List<Curriculum> listToAdd = timeSlot_Curricula.get(Timeslot-1);
+					    	listToAdd.addAll(timeRoom.getValue().belongsToCurricula);
+					    	timeSlot_Curricula.put(Timeslot-1, listToAdd);
+					    });
+					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot).forEach( timeRoom -> {
+					    	List<Curriculum> listToAdd = timeSlot_Curricula.get(Timeslot);
+					    	listToAdd.addAll(timeRoom.getValue().belongsToCurricula);
+					    	listToAdd.addAll(chosenCourse[0].belongsToCurricula);
+					    	timeSlot_Curricula.put(Timeslot, listToAdd);
+					    });
+					    
+					    //every curriculum in the new timeslot which is not present in the previous one is one violation
+					    timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot)).stream().forEach(curr -> {
+					    	if (timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot)).contains(curr) == false) {
+					    		soft_penalty[0] += 1;
+					    	}
+					    });
+						}
+						
+						//calculate g_j_k
+						timeslotRoom_g_jk_map.put(entry.getKey(), uac_ij[0] + 0.5* soft_penalty[0]);
+					}
+				}	
+		 });
+		 
+	}//main
 }

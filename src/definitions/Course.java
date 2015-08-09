@@ -15,11 +15,12 @@ public Integer courseID;
 public Integer TeacherID;
 public Integer numberOfLectures;
 public Integer numberOfUnassignedLectures;
+public Integer minWorkDays;
 
-public List<Integer> belongsToCurricula = new ArrayList<>();
+public List<Curriculum> belongsToCurricula = new ArrayList<>();
 
 //Constructor
-public Course(int id, int teach, int num_of_lec, List<Integer> curr) {
+public Course(int id, int teach, int num_of_lec, List<Curriculum> curr) {
 	courseID = id;
 	TeacherID = teach;
 	numberOfLectures = num_of_lec;
