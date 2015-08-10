@@ -21,19 +21,6 @@ import definitions.Room;
  *
  */
 
-//just a dummy class, delete
-class sth{
-	Integer one;
-	Integer two;
-	String three;
-	
-	public sth(int one, int two, int three){
-		this.one = one;
-		this.two = two;
-		this.three = Integer.toString(three);
-	}
-}
-
 public class populationGeneration {
 
 	/**
@@ -102,36 +89,63 @@ public class populationGeneration {
 	}
 	
 	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * WHERE THE MAGIC HAPPENS
+	 */
+
+	
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		/**
-		 *  try to populate the HashMap with some dummy values
-		 */
-		 Map<KeyDayTimeRoom,String> myMap = new HashMap<>();
-		 myMap.put(new KeyDayTimeRoom(0,0,new Room(1,156)), "first");
-		 myMap.put(new KeyDayTimeRoom(15,23,new Room(4,455)), "second");
-		 
-		 myMap.keySet().stream().filter( kdtr -> kdtr.getRoom().getRoomCapacity() == 455).forEach(kdtr -> System.out.println(kdtr.getDay()));
-		 
-		 Map<KeyDayTimeRoom,sth> myObjMap = new HashMap<>();
-		 myObjMap.put(new KeyDayTimeRoom(0,0,new Room(1,156)), new sth(1,2,3));
-		 myObjMap.put(new KeyDayTimeRoom(15,23,new Room(4,455)), new sth(5,234,32));
-		 
-		 myObjMap.values().stream().filter(stuff -> stuff.three.equals("32")).forEach(stuff -> System.out.println(stuff.three));
-		 
+			 
 		 /**
 		  *  TO DO : initialize the lists with courses, curricula, rooms,...
 		  */
 
-		 
+		int populationSize = 1;
 		 /**
-		  *  Generate the population population
+		  *  Generate the population
 		  */
+		for (int i=0; i < populationSize; i++) {
+		
+         tempSolution.clear();
+         tabuTimeslot_teacher.clear();
+         tabuTimeslot_curriculum.clear();
+         course_rooms_map.clear();
+         course_day_map.clear();
+         
+         //reassign the full number of courses to listCourses and list Curricula
+         listCourses.stream().forEach(kurs -> {
+        	 kurs.numberOfUnassignedLectures = kurs.numberOfLectures;
+         });
+         
+         listCurricula.stream().forEach(curriculum -> {
+        	 curriculum.coursesThatBelongToCurr.forEach(curso -> {
+        		 curso.numberOfUnassignedLectures = curso.numberOfLectures;
+        	 });
+         });
 		 
+         /**
+          * Generation of tempSolution, one entry of the population
+          */
+         
+         while ( listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).count() > 0 )
+         {
+         
+         /**
+          * insert hier ABBRUCH BEDINGUNG FALLS KEINE WEITERE LECTURES ASSIGNED WERDEN KÖNNEN	 
+          */
+        	 
+        	 
 		 /***************** Choose a course according to HR 1 *****************/
 		 /***************** courses with small numbers of available periods and large number of unassigned lectures have priority *****************/
 		 
+         checkedKDT.clear(); // gehört es wirklich hier?
 		 Map<Course,Double> course_apd_i = new HashMap<>();
 		 Map<Course,Double> course_aps_i = new HashMap<>();
 		 double min_apd = 0;
@@ -139,7 +153,7 @@ public class populationGeneration {
 		 double max = 0;
 		 Course selectedCourse = null;
 		 // fill the maps with the courses and their corresponding apd and aps divided by the number of unassigned lectures
-		 listCourses.stream().forEach((course) -> {
+		 listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).forEach((course) -> {
 		 Integer[] apd_aps = new Integer[2];
 	     apd_aps = calc_apd_aps(course,tempSolution);
 		 double unassignedLectures = course.numberOfUnassignedLectures;
@@ -302,7 +316,47 @@ public class populationGeneration {
 						timeslotRoom_g_jk_map.put(entry.getKey(), uac_ij[0] + 0.5* soft_penalty[0]);
 					}
 				}	
+		 });//calculation of g_jk from tempSolution
+		 
+		 //select the entry with the minimum value of g_jk
+		 Double[] min_g_jk = new Double[1];
+		 min_g_jk[0] = Double.MAX_VALUE;
+		 timeslotRoom_g_jk_map.entrySet().stream().forEach(entry_ -> {
+			 min_g_jk[0] = (entry_.getValue() - min_g_jk[0] < 0.00001)? entry_.getValue() : min_g_jk[0] ; 
 		 });
 		 
+		 //assign the kdtr with smallest value of g_jk
+		 KeyDayTimeRoom chosen_kdtr = timeslotRoom_g_jk_map.entrySet().stream().filter( entry__ -> entry__.getValue() - min_g_jk[0] < 0.000001).findAny().get().getKey();
+		 
+		 //implement the feasible lecture insertion
+		 tempSolution.putIfAbsent(chosen_kdtr, chosenCourse[0]);
+		 
+		 //update all the necessary lists!
+		 
+		 listCurricula.stream().filter(curr -> curr.coursesThatBelongToCurr.contains(chosenCourse[0])).forEach(currr -> {
+			 //for each curriculum where the course takes place in, reduce the number of unassigned lectures in that course
+			 currr.coursesThatBelongToCurr.get(currr.coursesThatBelongToCurr.indexOf(chosenCourse[0])).numberOfUnassignedLectures -=1;
+		 });
+		 
+		 listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures -=1;
+		 
+		 timeslotRoom_g_jk_map.clear();
+		 
+		 //tabuTimeslot_teacher
+		 KeyDayTime lastKDT = new KeyDayTime(chosen_kdtr.getDay(), chosen_kdtr.getTimeslot());
+		 tabuTimeslot_teacher.get(lastKDT).add(chosenCourse[0].TeacherID);
+		 List<Integer> banned_teachers = tabuTimeslot_teacher.get(lastKDT);
+		 tabuTimeslot_teacher.put(lastKDT, banned_teachers);
+		 
+		 //tabuTimeslot_curriculum
+		 tabuTimeslot_curriculum.get(lastKDT).addAll(chosenCourse[0].belongsToCurricula);
+		 List<Curriculum> banned_curricula = tabuTimeslot_curriculum.get(lastKDT);
+		 tabuTimeslot_curriculum.put(lastKDT, banned_curricula);
+		 
+         } // while unfinished lectures still there
+		 //after no more unfinished lectures to assign or Abbruch Bedingung, assign tempSolution to population
+         population.add(tempSolution);
+         i++;
+		} // for i<populationSize
 	}//main
 }
