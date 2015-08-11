@@ -15,6 +15,7 @@ import definitions.Curriculum;
 import definitions.KeyDayTime;
 import definitions.KeyDayTimeRoom;
 import definitions.Room;
+import xmlParser.Parser;
 
 /**
  * @author alexandrubucur
@@ -32,10 +33,16 @@ public class populationGeneration {
 	  *  TO DO : initialize all lists below with the right size!!!
 	  *   				!!!!!!!!!!!!!!!!!!!!
 	  */
-	 static List<Curriculum> listCurricula = new ArrayList<>();
-	 static List<Course> listCourses = new ArrayList<>();
+	 public static List<Curriculum> listCurricula = new ArrayList<>();
+	 public static List<Course> listCourses = new ArrayList<>();
+	 public static List<Room> listRooms = new ArrayList<>();
+	 public static int totalDays;
+	 public static int timeslotsPerDay;
+	 public static int dailyLecturesMin;
+	 public static int dailyLecturesMax;
 	 
-	 static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>();
+	 
+	 public static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>();
 	 static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>();
 	 
 	 static Map<KeyDayTime,List<Integer/*TeacherID*/>> tabuTimeslot_teacher = new HashMap<>();
@@ -61,7 +68,7 @@ public class populationGeneration {
 			int Day = entry.getKey().getDay();
 			int Timeslot = entry.getKey().getTimeslot();
 			KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
-			if (tabuTimeslot_teacher.get(kdt).contains(course_i.TeacherID) == false) {
+			if (tabuTimeslot_teacher.get(kdt).contains(course_i.teacherID) == false) {
 				//teacher has not been banned yet, check if curricula bans for timeslot contain any curriculum to which the course belongs.
 				if (Collections.disjoint(tabuTimeslot_curriculum.get(kdt), course_i.belongsToCurricula)) {
 					// teacher not banned, and no curricula to which the course belongs are banned during the timeslot, course_i could be assigned
@@ -87,10 +94,17 @@ public class populationGeneration {
 		});
 		return belongsToCurr;
 	}
-	
-	
-	
-	
+
+	public static void initializeTempSolutionToNull() {
+		for(int i=0; i < totalDays; i++) {
+			for(int k=0; k < timeslotsPerDay; k++) {
+				for(int r=0; r<listRooms.size(); r++) {
+					KeyDayTimeRoom kdtr_ini = new KeyDayTimeRoom(i,k,listRooms.get(r));
+					tempSolution.putIfAbsent(kdtr_ini, null);
+				}
+			}
+		}
+	}
 	
 	
 	
@@ -103,10 +117,11 @@ public class populationGeneration {
 	
 	public static void main(String[] args) {
 			 
-		 /**
-		  *  TO DO : initialize the lists with courses, curricula, rooms,...
-		  */
-
+		//string is the path?
+		String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		Parser.setxmlFile(pathToXml);
+		Parser.getData();
+		
 		int populationSize = 1;
 		 /**
 		  *  Generate the population
@@ -114,6 +129,8 @@ public class populationGeneration {
 		for (int i=0; i < populationSize; i++) {
 		
          tempSolution.clear();
+         initializeTempSolutionToNull();
+         
          tabuTimeslot_teacher.clear();
          tabuTimeslot_curriculum.clear();
          course_rooms_map.clear();
@@ -208,7 +225,7 @@ public class populationGeneration {
 						con_f_i.put(course, con_f_i.get(course) + curr.coursesThatBelongToCurr.size()); 
 					 });
 					 //courses that share a common teacher
-					   con_f_i.put(course, (int) (con_f_i.get(course) + listCourses.stream().filter( (kurs) -> kurs.TeacherID == course.TeacherID).count()));
+					   con_f_i.put(course, (int) (con_f_i.get(course) + listCourses.stream().filter( (kurs) -> kurs.teacherID == course.teacherID).count()));
 				 });
 				 
 					// find maximum for con_f_i first
@@ -247,7 +264,7 @@ public class populationGeneration {
 			    int Day = entry.getKey().getDay();
 				int Timeslot = entry.getKey().getTimeslot();
 				KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
-				if (tabuTimeslot_teacher.get(kdt).contains(chosenCourse[0].TeacherID) == false) {
+				if (tabuTimeslot_teacher.get(kdt).contains(chosenCourse[0].teacherID) == false) {
 					//teacher has not been banned yet, check if curricula bans for timeslot contain any curriculum to which the course belongs.
 					if (Collections.disjoint(tabuTimeslot_curriculum.get(kdt), chosenCourse[0].belongsToCurricula)) {
 						//feasible insertion, check value of g(j,k) and add it to map (don't assign the course, just add to map kdtr -> g(j,k))
@@ -255,7 +272,7 @@ public class populationGeneration {
 						int[] uac_ij = new int[1];
 						uac_ij[0] = 0;
 						//count courses with same teacher
-						uac_ij[0] = (int) listCourses.stream().filter(curso -> curso.TeacherID == chosenCourse[0].TeacherID).count();
+						uac_ij[0] = (int) listCourses.stream().filter(curso -> curso.teacherID == chosenCourse[0].teacherID).count();
 						// count courses from same curricula * number of unfinished lectures of that course
 						chosenCourse[0].belongsToCurricula.forEach( curriculum -> {
 							curriculum.coursesThatBelongToCurr.forEach(course_in_curr -> {
@@ -268,14 +285,10 @@ public class populationGeneration {
 						soft_penalty[0] = 0;
 						
 						//S1 enrolled students - room capacity  -> konstante a_1 = 1
-					    int[] enrolledStudents = new int[1];
-						enrolledStudents[0] = 0;
+					    int enrolledStudents = chosenCourse[0].students;
 						
-						chosenCourse[0].belongsToCurricula.forEach( curr -> {
-							enrolledStudents[0] += curr.numberOfStudents;
-						});
-						if (enrolledStudents[0] > entry.getKey().getRoom().getRoomCapacity()) {
-							soft_penalty[0] += 1 * (enrolledStudents[0] - entry.getKey().getRoom().getRoomCapacity());
+						if (enrolledStudents > entry.getKey().getRoom().getRoomCapacity()) {
+							soft_penalty[0] += 1 * (enrolledStudents - entry.getKey().getRoom().getRoomCapacity());
 						}
 						
 						//S2 room stability -> konstante a_2 = 1
@@ -344,7 +357,7 @@ public class populationGeneration {
 		 
 		 //tabuTimeslot_teacher
 		 KeyDayTime lastKDT = new KeyDayTime(chosen_kdtr.getDay(), chosen_kdtr.getTimeslot());
-		 tabuTimeslot_teacher.get(lastKDT).add(chosenCourse[0].TeacherID);
+		 tabuTimeslot_teacher.get(lastKDT).add(chosenCourse[0].teacherID);
 		 List<Integer> banned_teachers = tabuTimeslot_teacher.get(lastKDT);
 		 tabuTimeslot_teacher.put(lastKDT, banned_teachers);
 		 

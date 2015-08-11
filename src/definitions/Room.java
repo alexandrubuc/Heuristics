@@ -8,16 +8,18 @@ package definitions;
  *
  */
 public class Room {
-Integer roomID;
+String roomID;
 Integer roomCapacity;
+public String Building;
 
-public Integer getRoomID () {return roomID;}
+public String getRoomID () {return roomID;}
 public Integer getRoomCapacity () {return roomCapacity;}
 
 //Constructor
-public Room(int id, int capacity) {
+public Room(String id, int capacity, String building) {
 	roomID = id;
 	roomCapacity = capacity;
+	Building = building;
 }
 
 }
