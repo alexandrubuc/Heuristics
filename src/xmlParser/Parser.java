@@ -81,8 +81,8 @@ public class Parser {
 		getCurricula();
 		//for each course in listCourses, get the list of curricula to which the course belongs 
 		populationGeneration.listCourses.stream().forEach(course -> course.belongsToCurricula = populationGeneration.currForCourse(course));
-		
 		// still get the course constraints
+		getConstraints();
 		
 	}
 
@@ -103,9 +103,7 @@ public class Parser {
 
 	}
 
-	/**
-	 *  for the courses we still have to populate their lists of timeslot constraints, room constraints
-	 */
+
 	private static void getCourses() {
 		nList = doc.getElementsByTagName("courses");
 		e = (Element) nList.item(0);
@@ -184,7 +182,7 @@ public class Parser {
 		}
 	}
 
-	private void geteligibleCombinations() {
+	private static void getConstraints() {
 		
 		nList = doc.getElementsByTagName("constraints");
 		e = (Element) nList.item(0);

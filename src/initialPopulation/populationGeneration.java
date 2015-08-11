@@ -64,7 +64,7 @@ public class populationGeneration {
 		aps = 0;
 		apd = 0;
 		// from the entries where the course has not yet been set, return those where the teacher and the curricula to which the course belongs are not banned from the timeslots
-		tempSol.entrySet().stream().filter(entry -> entry.getValue().equals(null)).forEach((entry)-> {
+		tempSol.entrySet().stream().filter(entry -> entry.getValue().equals(null)).filter(entry -> (course_i.constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (course_i.constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach((entry)-> {
 			int Day = entry.getKey().getDay();
 			int Timeslot = entry.getKey().getTimeslot();
 			KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
@@ -106,6 +106,26 @@ public class populationGeneration {
 		}
 	}
 	
+	public static void replicateCoursesFromListCoursestoListCurricula() {
+         	listCurricula.stream().forEach(curr -> {
+			curr.coursesThatBelongToCurr.stream().forEach( curso -> {
+				Course[] newer = new Course[1];
+				newer[0] = listCourses.stream().filter(curs_f -> curs_f.courseID == curso.courseID ).findAny().get();
+				curso.belongsToCurricula = newer[0].belongsToCurricula;
+				curso.constraintsRoom = newer[0].constraintsRoom;
+				curso.constraintsTimeslot = newer[0].constraintsTimeslot;
+				curso.courseID = newer[0].courseID;
+				curso.doubleLectures = newer[0].doubleLectures;
+				curso.minWorkDays = newer[0].minWorkDays ;
+				curso.numberOfLectures = newer[0].numberOfLectures;
+				curso.numberOfUnassignedLectures = newer[0].numberOfUnassignedLectures;
+				curso.students = newer[0].students;
+				curso.teacherID = newer[0].teacherID;
+						
+			});
+		});
+	}
+	
 	
 	
 	/**
@@ -121,6 +141,21 @@ public class populationGeneration {
 		String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
 		Parser.setxmlFile(pathToXml);
 		Parser.getData();
+		// make sure the listCourses and listCurricula start with the same definition of courses
+		replicateCoursesFromListCoursestoListCurricula();
+		
+		
+		
+		/**
+		 *  Test initialization values
+		 */
+		
+		listCourses.stream().forEach(course -> {
+			System.out.println(course.courseID);
+			System.out.println(course.numberOfUnassignedLectures);
+		});
+		
+		
 		
 		int populationSize = 1;
 		 /**
@@ -259,7 +294,7 @@ public class populationGeneration {
 		 chosenCourse[0] = selectedCourse;
 		 
 		 // for each available period-room pair choose the pair with the smallest value of g(j,k) = k_1 * uac_i_j(X) + k_2 * Delta_f_s(i,j,k)
-		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue().equals(null)).forEach( (entry) -> {
+		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue().equals(null)).filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach( (entry) -> {
 			    //check for feasibility of entry, where teacher or curriculum banned
 			    int Day = entry.getKey().getDay();
 				int Timeslot = entry.getKey().getTimeslot();
