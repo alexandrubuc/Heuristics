@@ -56,6 +56,7 @@ public int compareTo(KeyDayTimeRoom kdtr) {
 	
 	if (assignedRoom.roomCapacity.compareTo(kdtr.getRoom().roomCapacity) != 0) {return 1;}
 	if (assignedRoom.roomID.compareTo(kdtr.getRoom().roomID) != 0) {return 1;}
+	if (assignedRoom.Building.compareTo(kdtr.getRoom().getBuilding()) != 0) {return 1;}
 	return 0;
 }
 

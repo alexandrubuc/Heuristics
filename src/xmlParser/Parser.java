@@ -195,20 +195,30 @@ public class Parser {
 
 		for(int i = 0; i < numberofconstraints;i++){
 			e = (Element) nList.item(i);
-			Integer course_id_ = Integer.parseInt(e.getAttribute("course").substring(1));
+			final Integer course_id_ = Integer.parseInt(e.getAttribute("course").substring(1));
 
 			//get eligible rooms
+			
 			if(e.getAttribute("type").equals("room")){
 				nList2 = e.getElementsByTagName("room");
 				numberofrooms = nList2.getLength();
 
 				for(int j= 0; j < numberofrooms;j++){
 					e = (Element) nList2.item(j);
-					Room room = populationGeneration.listRooms.stream().filter(camera -> camera.getRoomID() == e.getAttribute("ref")).findAny().get();
-					populationGeneration.listCourses.stream().filter(course -> course.courseID == course_id_).findAny().get().constraintsRoom.add(room);
+					Room room = null;
+					try {
+					room = populationGeneration.listRooms.stream().filter(camera -> camera.getRoomID().equals(e.getAttribute("ref"))).findAny().get();
+					} 
+					catch (Exception ex) {System.out.println("no room found"); ex.printStackTrace();}
+					try{
+					populationGeneration.listCourses.stream().filter(course -> course.courseID.equals(course_id_)).findAny().get().constraintsRoom.add(room);
+					}
+					catch (Exception ex) {System.out.println("error inserting ro constraintsRoom list");ex.printStackTrace();}
 				}
 
-			}//get eligible timeslots
+			}
+			//get eligible timeslots
+			
 			else if(e.getAttribute("type").equals("period")){
 				nList2 = e.getElementsByTagName("timeslot");
 				numberoftimeslots = nList2.getLength();
@@ -216,7 +226,14 @@ public class Parser {
 				for(int j= 0; j < numberoftimeslots;j++){
 					e = (Element) nList2.item(j);
 					KeyDayTime kdt = new KeyDayTime( Integer.parseInt(e.getAttribute("day")),Integer.parseInt(e.getAttribute("period")));
-					populationGeneration.listCourses.stream().filter(course -> course.courseID == course_id_).findAny().get().constraintsTimeslot.add(kdt);
+					try {
+					populationGeneration.listCourses.stream().filter(course -> course.courseID.equals(course_id_)).findAny().get().constraintsTimeslot.add(kdt);
+					}
+					catch (Exception ex) {
+				    ex.printStackTrace();
+					System.out.println("the course ID was "+ course_id_);
+					populationGeneration.listCourses.stream().forEachOrdered(course -> System.out.println(course.courseID));
+					}
 				}
 			}
 

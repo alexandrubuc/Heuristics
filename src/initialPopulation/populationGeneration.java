@@ -64,13 +64,13 @@ public class populationGeneration {
 		aps = 0;
 		apd = 0;
 		// from the entries where the course has not yet been set, return those where the teacher and the curricula to which the course belongs are not banned from the timeslots
-		tempSol.entrySet().stream().filter(entry -> entry.getValue().equals(null)).filter(entry -> (course_i.constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (course_i.constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach((entry)-> {
+		tempSol.entrySet().stream().filter(entry -> entry.getValue() == null).filter(entry -> (course_i.constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (course_i.constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach((entry)-> {
 			int Day = entry.getKey().getDay();
 			int Timeslot = entry.getKey().getTimeslot();
 			KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
-			if (tabuTimeslot_teacher.get(kdt).contains(course_i.teacherID) == false) {
+			if (tabuTimeslot_teacher.get(kdt) != null && tabuTimeslot_teacher.get(kdt).contains(course_i.teacherID) == false) {
 				//teacher has not been banned yet, check if curricula bans for timeslot contain any curriculum to which the course belongs.
-				if (Collections.disjoint(tabuTimeslot_curriculum.get(kdt), course_i.belongsToCurricula)) {
+				if (tabuTimeslot_curriculum.get(kdt) != null && Collections.disjoint(tabuTimeslot_curriculum.get(kdt), course_i.belongsToCurricula)) {
 					// teacher not banned, and no curricula to which the course belongs are banned during the timeslot, course_i could be assigned
 					aps +=1;
 					if (checkedKDT.contains(kdt) == false) {
@@ -137,25 +137,27 @@ public class populationGeneration {
 	
 	public static void main(String[] args) {
 			 
-		//string is the path?
+		long startTime = System.nanoTime();
+		
+		
 		String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		//String pathToXml = "/Users/bucura/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
 		Parser.setxmlFile(pathToXml);
 		Parser.getData();
 		// make sure the listCourses and listCurricula start with the same definition of courses
 		replicateCoursesFromListCoursestoListCurricula();
 		
-		
-		
-		/**
-		 *  Test initialization values
-		 */
-		
-		listCourses.stream().forEach(course -> {
-			System.out.println(course.courseID);
-			System.out.println(course.numberOfUnassignedLectures);
-		});
-		
-		
+		long estimatedTime = System.nanoTime() - startTime;
+		System.out.println((double) estimatedTime / 1000000000.0 + " seconds for importing the dataset from XML");
+
+	/*	initializeTempSolutionToNull();
+		System.out.println(tempSolution.size());
+		tempSolution.keySet().forEach(key -> {if (key.getRoom().getRoomID().equals("r36")) {System.out.println(key.Day +" "+ key.Timeslot +" " + key.getRoom().getRoomID() + " " + key.getRoom().getRoomCapacity() + " " + key.getRoom().getBuilding());}});
+		System.out.println(tempSolution.get(new KeyDayTimeRoom(1, 3, new Room("r36",42,"0")).toString()));
+		System.out.println(tempSolution.containsKey(new KeyDayTimeRoom(1, 3, new Room("r36",42,"0"))));
+		tempSolution.entrySet().stream().filter(entry -> entry.getKey().assignedRoom.getRoomID().equals("r36")).forEach(entry -> System.out.println(entry.getKey().Timeslot));
+		tempSolution.entrySet().stream().filter(entry -> entry.getValue() == null).forEach(entry -> System.out.println("yeah"));
+				*/
 		
 		int populationSize = 1;
 		 /**
@@ -294,14 +296,14 @@ public class populationGeneration {
 		 chosenCourse[0] = selectedCourse;
 		 
 		 // for each available period-room pair choose the pair with the smallest value of g(j,k) = k_1 * uac_i_j(X) + k_2 * Delta_f_s(i,j,k)
-		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue().equals(null)).filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach( (entry) -> {
+		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue() == null).filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach( (entry) -> {
 			    //check for feasibility of entry, where teacher or curriculum banned
 			    int Day = entry.getKey().getDay();
 				int Timeslot = entry.getKey().getTimeslot();
 				KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
-				if (tabuTimeslot_teacher.get(kdt).contains(chosenCourse[0].teacherID) == false) {
+				if (tabuTimeslot_teacher.get(kdt) == null || tabuTimeslot_teacher.get(kdt).contains(chosenCourse[0].teacherID) == false) {
 					//teacher has not been banned yet, check if curricula bans for timeslot contain any curriculum to which the course belongs.
-					if (Collections.disjoint(tabuTimeslot_curriculum.get(kdt), chosenCourse[0].belongsToCurricula)) {
+					if (tabuTimeslot_curriculum.get(kdt) == null || Collections.disjoint(tabuTimeslot_curriculum.get(kdt), chosenCourse[0].belongsToCurricula)) {
 						//feasible insertion, check value of g(j,k) and add it to map (don't assign the course, just add to map kdtr -> g(j,k))
 						
 						int[] uac_ij = new int[1];
@@ -330,8 +332,16 @@ public class populationGeneration {
 						soft_penalty[0] += (course_rooms_map.entrySet().stream().count() - 1);
 						
 						//S3 minimum working days -> konstante a_3 = 5
-						if (course_day_map.get(chosenCourse[0]).size() < chosenCourse[0].minWorkDays) {
-						soft_penalty[0] += 5 * (course_day_map.get(chosenCourse[0]).size() - chosenCourse[0].minWorkDays);
+						if (course_day_map.get(chosenCourse[0]) == null || course_day_map.get(chosenCourse[0]).size() < chosenCourse[0].minWorkDays) {
+							
+							Integer days_in_map = null;
+							if (course_day_map.get(chosenCourse[0]) == null) {
+								days_in_map = 0;
+								}
+							else {
+								days_in_map = course_day_map.get(chosenCourse[0]).size();
+							}
+						soft_penalty[0] += 5 * (chosenCourse[0].minWorkDays - days_in_map );
 						}
 						
 						//S4 curriculum compactness -> konstante a_4 = 2
@@ -342,27 +352,40 @@ public class populationGeneration {
 						if (Timeslot>1 ){
 					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot - 1).forEach( timeRoom -> {
 					    	List<Curriculum> listToAdd = timeSlot_Curricula.get(Timeslot-1);
+					    	if (timeRoom.getValue() != null) {
 					    	listToAdd.addAll(timeRoom.getValue().belongsToCurricula);
+					    	}
+					    	else{
+					    		listToAdd = new ArrayList<Curriculum>();
+					    	}
 					    	timeSlot_Curricula.put(Timeslot-1, listToAdd);
 					    });
 					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot).forEach( timeRoom -> {
-					    	List<Curriculum> listToAdd = timeSlot_Curricula.get(Timeslot);
-					    	listToAdd.addAll(timeRoom.getValue().belongsToCurricula);
-					    	listToAdd.addAll(chosenCourse[0].belongsToCurricula);
-					    	timeSlot_Curricula.put(Timeslot, listToAdd);
+					    	List<Curriculum> listToAdd_ = timeSlot_Curricula.get(Timeslot);
+					    	if (timeRoom.getValue() != null) {
+					    	listToAdd_.addAll(timeRoom.getValue().belongsToCurricula);
+					    	}
+					    	List<Curriculum> currChosen = chosenCourse[0].belongsToCurricula; //ist in Ordnung
+					    	if (listToAdd_ == null) {
+					    		listToAdd_ = new ArrayList<Curriculum>();
+					    	}
+					    	listToAdd_.addAll(currChosen);
+					    	timeSlot_Curricula.put(Timeslot, listToAdd_);
 					    });
 					    
 					    //every curriculum in the new timeslot which is not present in the previous one is one violation
-					    timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot)).stream().forEach(curr -> {
-					    	if (timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot)).contains(curr) == false) {
+					    //timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot)).stream().forEach(curr -> {
+					    timeSlot_Curricula.get(Timeslot).stream().forEach(curr -> {
+					    //	if (timeSlot_Curricula.get(new KeyDayTime(Day,Timeslot-1)).contains(curr) == false) {
+					    	if (timeSlot_Curricula.get(Timeslot-1).contains(curr) == false) {
 					    		soft_penalty[0] += 1;
 					    	}
 					    });
-						}
+						} // if timeslot > 1
 						
 						//calculate g_j_k
 						timeslotRoom_g_jk_map.put(entry.getKey(), uac_ij[0] + 0.5* soft_penalty[0]);
-					}
+					}//if curricula not banned
 				}	
 		 });//calculation of g_jk from tempSolution
 		 
@@ -374,12 +397,34 @@ public class populationGeneration {
 		 });
 		 
 		 //assign the kdtr with smallest value of g_jk
-		 KeyDayTimeRoom chosen_kdtr = timeslotRoom_g_jk_map.entrySet().stream().filter( entry__ -> entry__.getValue() - min_g_jk[0] < 0.000001).findAny().get().getKey();
+		 //System.out.println(timeslotRoom_g_jk_map.size());
+		 KeyDayTimeRoom chosen_kdtr = timeslotRoom_g_jk_map.entrySet().stream().filter( entry__ -> entry__.getValue() - min_g_jk[0] < 0.0001).findAny().get().getKey();
 		 
 		 //implement the feasible lecture insertion
 		 tempSolution.putIfAbsent(chosen_kdtr, chosenCourse[0]);
 		 
 		 //update all the necessary lists!
+		 
+		 //update the map which keeps track of the days on which the course takes place
+		 
+		 List<Integer> list_days = new ArrayList<>(); 
+		 
+		 if (course_day_map.get(chosenCourse[0]) != null) {
+			 list_days = course_day_map.get(chosenCourse[0]);
+		 }
+		 list_days.add(chosen_kdtr.Day);
+		 course_day_map.put(chosenCourse[0],list_days);
+		 
+		//update the map which keeps track of the days on which the course takes place
+		 List<Room> list_rooms = new ArrayList<>(); 
+		 if (course_rooms_map.get(chosenCourse[0]) != null) {
+		 list_rooms = course_rooms_map.get(chosenCourse[0]);
+		 }
+		 list_rooms.add(chosen_kdtr.getRoom());
+		 course_rooms_map.put(chosenCourse[0],list_rooms);
+		 
+		 
+		 
 		 
 		 listCurricula.stream().filter(curr -> curr.coursesThatBelongToCurr.contains(chosenCourse[0])).forEach(currr -> {
 			 //for each curriculum where the course takes place in, reduce the number of unassigned lectures in that course
@@ -392,14 +437,28 @@ public class populationGeneration {
 		 
 		 //tabuTimeslot_teacher
 		 KeyDayTime lastKDT = new KeyDayTime(chosen_kdtr.getDay(), chosen_kdtr.getTimeslot());
+		 if (tabuTimeslot_teacher.get(lastKDT) != null){
 		 tabuTimeslot_teacher.get(lastKDT).add(chosenCourse[0].teacherID);
-		 List<Integer> banned_teachers = tabuTimeslot_teacher.get(lastKDT);
-		 tabuTimeslot_teacher.put(lastKDT, banned_teachers);
+		 }
+		 else {
+			 List<Integer> bannedTeachies = new ArrayList<>(1);
+			 bannedTeachies.add(chosenCourse[0].teacherID);
+			 tabuTimeslot_teacher.put(lastKDT, bannedTeachies);
+		 }
+		/* List<Integer> banned_teachers = tabuTimeslot_teacher.get(lastKDT);
+		 tabuTimeslot_teacher.put(lastKDT, banned_teachers);*/
 		 
 		 //tabuTimeslot_curriculum
+		 if (tabuTimeslot_curriculum.get(lastKDT) != null){
 		 tabuTimeslot_curriculum.get(lastKDT).addAll(chosenCourse[0].belongsToCurricula);
-		 List<Curriculum> banned_curricula = tabuTimeslot_curriculum.get(lastKDT);
-		 tabuTimeslot_curriculum.put(lastKDT, banned_curricula);
+		 }
+		 else {
+	     List<Curriculum> banned_curricula = new ArrayList<>();
+	     banned_curricula.addAll(chosenCourse[0].belongsToCurricula);
+	     tabuTimeslot_curriculum.put(lastKDT, banned_curricula);
+		 }
+		/* List<Curriculum> banned_curricula = tabuTimeslot_curriculum.get(lastKDT);
+		 tabuTimeslot_curriculum.put(lastKDT, banned_curricula); */
 		 
          } // while unfinished lectures still there
 		 //after no more unfinished lectures to assign or Abbruch Bedingung, assign tempSolution to population
