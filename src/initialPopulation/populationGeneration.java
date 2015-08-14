@@ -34,24 +34,24 @@ public class populationGeneration {
 	  *  TO DO : initialize all lists below with the right size!!!
 	  *   				!!!!!!!!!!!!!!!!!!!!
 	  */
-	 public static List<Curriculum> listCurricula = new ArrayList<>();
-	 public static List<Course> listCourses = new ArrayList<>();
-	 public static List<Room> listRooms = new ArrayList<>();
+	 public static List<Curriculum> listCurricula = new ArrayList<>(100);
+	 public static List<Course> listCourses = new ArrayList<>(100);
+	 public static List<Room> listRooms = new ArrayList<>(50);
 	 public static int totalDays;
 	 public static int timeslotsPerDay;
 	 public static int dailyLecturesMin;
 	 public static int dailyLecturesMax;
+	 public static int popSize = 5;
 	 
+	 public static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>(1000);
+	 static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>(50);
 	 
-	 public static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>();
-	 static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>();
+	 static Map<KeyDayTime,List<Integer/*TeacherID*/>> tabuTimeslot_teacher = new HashMap<>(100);
+	 static Map<KeyDayTime,List<Curriculum>> tabuTimeslot_curriculum = new HashMap<>(100);
 	 
-	 static Map<KeyDayTime,List<Integer/*TeacherID*/>> tabuTimeslot_teacher = new HashMap<>();
-	 static Map<KeyDayTime,List<Curriculum>> tabuTimeslot_curriculum = new HashMap<>();
-	 
-	 static Map<KeyDayTimeRoom, Double> timeslotRoom_g_jk_map = new HashMap<>();
-	 static Map<Course, List<Room>> course_rooms_map = new HashMap<>();
-	 static Map<Course, List<Integer>> course_day_map = new HashMap<>();
+	 static Map<KeyDayTimeRoom, Double> timeslotRoom_g_jk_map = new HashMap<>(1000);
+	 static Map<Course, List<Room>> course_rooms_map = new HashMap<>(100);
+	 static Map<Course, List<Integer>> course_day_map = new HashMap<>(100);
      //static Map<KeyDayTime, List<Curriculum>> soft_const_4_list = new HashMap<>(); 
 	 
 	 static Integer aps = 0;
@@ -137,13 +137,13 @@ public class populationGeneration {
 
 	
 	
-	public static void main(String[] args) {
+	    public static void main_(String[] args) {
 			 
 		long startTime = System.nanoTime();
 		
 		
-		//String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
-		String pathToXml = "/Users/bucura/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		//String pathToXml = "/Users/bucura/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
 		Parser.setxmlFile(pathToXml);
 		Parser.getData();
 		// make sure the listCourses and listCurricula start with the same definition of courses
@@ -164,11 +164,11 @@ public class populationGeneration {
 		
 		long startTimeWholePopulation = System.nanoTime();
 		
-		int populationSize = 50;
+		
 		 /**
 		  *  Generate the population
 		  */
-		for (int i=0; i < populationSize; i++) {
+		for (int i=0; i < popSize; i++) {
 		
          tempSolution.clear();
          initializeTempSolutionToNull();
@@ -317,8 +317,6 @@ public class populationGeneration {
 			 selectedCourse = tieCourses_apd.get(0);
 		 }
 		 
-		 long estimatedHalfTime = System.nanoTime() - startTime;
-	 		System.out.println(i +"   "+ (double) estimatedHalfTime / 1000000000.0 + " seconds for one member of population");
 		 
 		 /***************** Assign the course according to HR 2 *****************/
 		 /***************** select a period among all available ones that is least likely to be used by other unfinished courses at later steps *****************/
@@ -536,8 +534,13 @@ public class populationGeneration {
 		long estimatedTimeWholePopulation = System.nanoTime() - startTimeWholePopulation;
 		System.out.println((double) estimatedTimeWholePopulation / 1000000000.0 + " seconds for the whole population of 50");
 		
+		//Copy population to the population of the algorithm class in the memeticAlgo package
+		memeticAlgo.Algorithm.population = population;
+		memeticAlgo.Algorithm.numDays = totalDays;
+		memeticAlgo.Algorithm.timeslotsPerDay = timeslotsPerDay;
+		memeticAlgo.Algorithm.popSize = popSize;
 		// Debug - See Timetable
-	/*      listRooms.stream().forEach(roomie -> {
+	 /*     listRooms.stream().forEach(roomie -> {
 			String RoomieID = roomie.getRoomID();
 			while (RoomieID.chars().count() <5) {
 				RoomieID += " ";
@@ -553,7 +556,7 @@ public class populationGeneration {
 						cursoID += " ";
 					}
 				}
-				System.out.print(cursoID + "    " );
+				System.out.print(cursoID + "    " ); 
 			}
 		} 
 		});//roomie */
