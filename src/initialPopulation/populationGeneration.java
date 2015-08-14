@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import definitions.Course;
 import definitions.Curriculum;
@@ -64,6 +65,7 @@ public class populationGeneration {
 		aps = 0;
 		apd = 0;
 		// from the entries where the course has not yet been set, return those where the teacher and the curricula to which the course belongs are not banned from the timeslots
+		//System.out.println("tempSoll entries still with value null : "+ tempSol.entrySet().stream().filter(entry -> entry.getValue() == null).count());
 		tempSol.entrySet().stream().filter(entry -> entry.getValue() == null).filter(entry -> (course_i.constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (course_i.constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach((entry)-> {
 			int Day = entry.getKey().getDay();
 			int Timeslot = entry.getKey().getTimeslot();
@@ -140,8 +142,8 @@ public class populationGeneration {
 		long startTime = System.nanoTime();
 		
 		
-		String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
-		//String pathToXml = "/Users/bucura/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		//String pathToXml = "/Users/alexandrubucur/Documents/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
+		String pathToXml = "/Users/bucura/workspace/TabuSearch/Input_Daten/UniUD_xml/Udine1.xml";
 		Parser.setxmlFile(pathToXml);
 		Parser.getData();
 		// make sure the listCourses and listCurricula start with the same definition of courses
@@ -149,7 +151,8 @@ public class populationGeneration {
 		
 		long estimatedTime = System.nanoTime() - startTime;
 		System.out.println((double) estimatedTime / 1000000000.0 + " seconds for importing the dataset from XML");
-
+		
+		//Debug
 	/*	initializeTempSolutionToNull();
 		System.out.println(tempSolution.size());
 		tempSolution.keySet().forEach(key -> {if (key.getRoom().getRoomID().equals("r36")) {System.out.println(key.Day +" "+ key.Timeslot +" " + key.getRoom().getRoomID() + " " + key.getRoom().getRoomCapacity() + " " + key.getRoom().getBuilding());}});
@@ -159,7 +162,9 @@ public class populationGeneration {
 		tempSolution.entrySet().stream().filter(entry -> entry.getValue() == null).forEach(entry -> System.out.println("yeah"));
 				*/
 		
-		int populationSize = 1;
+		long startTimeWholePopulation = System.nanoTime();
+		
+		int populationSize = 50;
 		 /**
 		  *  Generate the population
 		  */
@@ -187,7 +192,7 @@ public class populationGeneration {
          /**
           * Generation of tempSolution, one entry of the population
           */
-         
+         startTime = System.nanoTime();
          while ( listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).count() > 0 )
          {
          
@@ -202,6 +207,8 @@ public class populationGeneration {
          checkedKDT.clear(); // gehört es wirklich hier?
 		 Map<Course,Double> course_apd_i = new HashMap<>();
 		 Map<Course,Double> course_aps_i = new HashMap<>();
+		 course_apd_i.clear();
+		 course_aps_i.clear();
 		 double min_apd = 0;
 		 double min_aps = 0;
 		 double max = 0;
@@ -215,41 +222,64 @@ public class populationGeneration {
 		 course_aps_i.putIfAbsent(course, apd_aps[1]/Math.sqrt(unassignedLectures));
 		 });		 
 		 
-		// choose the course with the smallest value of apd_i(X)/sqrt(nl_i(X))
+		 // DEBUG
+		// System.out.println("Size of course_apd_i map is " + course_apd_i.size() + " Size of course_aps_i map is "+course_aps_i.size() );
+		
+		 // choose the course with the smallest value of apd_i(X)/sqrt(nl_i(X))
 		 
 		// find minimum for apd first
 		 min_apd = 1000;
 		 min_aps = 1000;
 		 max = 0;
-		 for(Entry<Course, Double> entry : course_apd_i.entrySet()) {
-			 min_apd = entry.getValue() - min_apd >= 0.01 ?  min_apd : entry.getValue();
-			}
 		 
+		 min_apd = Collections.min(course_apd_i.values());
+		 
+
 		// add all elements that have a value equal to min_apd
 		 List<Course> tieCourses_apd = new ArrayList<>();
 		 List<Course> tieCourses_aps = new ArrayList<>();
+		 
 		 for(Entry<Course, Double> entry : course_apd_i.entrySet()) {
-			 if (entry.getValue() - min_apd <= 0.01 ) {
+			 if (entry.getValue() - min_apd <= 0.00000000001 && entry.getValue() - min_apd >= -0.00000000001  ) {
 				 tieCourses_apd.add(entry.getKey());
 			 }
 		 }
 		 
+		//DEBUG
+		/* if (tieCourses_apd.size() == 0 ) {
+		 System.out.println("Achtung size of tieCourses_apd is zero, but min_apd is "+ min_apd + " and course_apd_i still has "+ course_apd_i.size()+ " elements");
+		 System.out.println("tieCourses_apd(0) is "+tieCourses_apd.get(0));
+		 }
+		 else {
+			 System.out.println("Size of tieCourses_apd is "+tieCourses_apd.size());
+		 }*/
+		 
+		 
+		 
+		 
 		// if tie between courses, choose the course with smallest value of aps_i(X)/sqrt(nl_i(X))
-		 if (tieCourses_apd.size() >1 ) {
+		 if (tieCourses_apd.size() > 1 ) {
 			// find minimum for aps first
 			 min_aps = 1000;
-			 for(Entry<Course, Double> entry : course_aps_i.entrySet()) {
-				 min_aps = entry.getValue() - min_aps >= 0.01 ?  min_aps : entry.getValue();
-				}
+			 min_aps = Collections.min(course_aps_i.values());
 			 
 			// add all elements that have a value equal to min_aps
 			 for(Entry<Course, Double> entry : course_aps_i.entrySet()) {
-				 if (entry.getValue() - min_aps <= 0.01 ) {
+				 if (entry.getValue() - min_aps <= 0.00000000001  && entry.getValue() - min_aps >= -0.00000000001) {
 					 tieCourses_aps.add(entry.getKey());
 				 }
 			 }
 			 
-			 if (tieCourses_aps.size()>1){
+			 //DEBUG
+			/* if (tieCourses_aps.size() == 0) {
+			 System.out.println("Achtung size of tieCourses_aps is zero, but min_apd is "+ min_aps);
+			 }
+			 else {
+				 System.out.println("Size of tieCourses_aps is "+tieCourses_aps.size());
+			 } */
+			 
+			 
+			 if (tieCourses_aps.size()>1) {
 				 // still courses with ties even for aps, now decide based on number of courses that share common students or teacher with course c_i
 				 // that means, the course with max : curricula to which it belongs x courses in curricula
 				 
@@ -266,19 +296,17 @@ public class populationGeneration {
 				 });
 				 
 					// find maximum for con_f_i first
-				 
-				 for(Entry<Course, Integer> entry : con_f_i.entrySet()) {
-					 max = entry.getValue() - min_aps >= 0.01 ? entry.getValue() : max;
-					}
-				 
-				 for(Entry<Course, Integer> entry_ : con_f_i.entrySet()) {
-					 if (entry_.getValue() - max <= 0.01 ) {
+				    max = (double) Collections.max(con_f_i.values());
+				    
+			   	outer : for(Entry<Course, Integer> entry_ : con_f_i.entrySet()) {
+					 if (entry_.getValue() - max <= 0.00000000001 && entry_.getValue() -max >= -0.00000000001 ) {
 						 selectedCourse = entry_.getKey();
-						 break;
+						 break outer;
 					 }
+					 }
+				  //DEBUG
+					// System.out.println("Achtung NO max con_f_i, size of con_f_i is " + con_f_i.size() + " max is "+ max + " selectedCourse con_f_i ist "+con_f_i.get(selectedCourse));
 				 }
-				 
-			 }
 			 else{
 				 //only one element with smallest aps_i, select course
 				 selectedCourse = tieCourses_aps.get(0);
@@ -289,6 +317,9 @@ public class populationGeneration {
 			 selectedCourse = tieCourses_apd.get(0);
 		 }
 		 
+		 long estimatedHalfTime = System.nanoTime() - startTime;
+	 		System.out.println(i +"   "+ (double) estimatedHalfTime / 1000000000.0 + " seconds for one member of population");
+		 
 		 /***************** Assign the course according to HR 2 *****************/
 		 /***************** select a period among all available ones that is least likely to be used by other unfinished courses at later steps *****************/
 		 
@@ -296,8 +327,24 @@ public class populationGeneration {
 		 chosenCourse[0] = selectedCourse;
 		 
 		 // for each available period-room pair choose the pair with the smallest value of g(j,k) = k_1 * uac_i_j(X) + k_2 * Delta_f_s(i,j,k)
-		 tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue() == null).filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach( (entry) -> {
-			    //check for feasibility of entry, where teacher or curriculum banned
+		 
+		 List<Map.Entry<KeyDayTimeRoom, Course>> course_still_null = tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue() == null).collect(Collectors.toList());
+		 
+		 //Debug
+		 if(chosenCourse[0] == null) {
+		 System.out.println("*********** HR1 CHOSEN COURSE IS NULL " + chosenCourse[0] == null );
+		 }
+		 
+		 if (chosenCourse[0].constraintsRoom != null ) {
+			 course_still_null = course_still_null.stream().filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false)).collect(Collectors.toList());
+		 }
+		 if (chosenCourse[0].constraintsTimeslot != null ) {
+			 course_still_null = course_still_null.stream().filter(entry -> chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot)) == false).collect(Collectors.toList());
+		 }
+		 
+		// tempSolution.entrySet().stream().filter( (kdtr) -> kdtr.getValue() == null).filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach( (entry) -> {
+			course_still_null.stream().forEach( entry -> {
+		 //check for feasibility of entry, where teacher or curriculum banned
 			    int Day = entry.getKey().getDay();
 				int Timeslot = entry.getKey().getTimeslot();
 				KeyDayTime kdt = new KeyDayTime(Day,Timeslot);
@@ -347,21 +394,38 @@ public class populationGeneration {
 						//S4 curriculum compactness -> konstante a_4 = 2
 						
 						//check only previous timeslot, all other ones are the same
-						Map<Integer, List<Curriculum>> timeSlot_Curricula = new HashMap<>();
+						Map<Integer, List<Curriculum>> timeSlot_Curricula = new HashMap<>(2);
 						
 						if (Timeslot>1 ){
-					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot - 1).forEach( timeRoom -> {
-					    	List<Curriculum> listToAdd = timeSlot_Curricula.get(Timeslot-1);
-					    	if (timeRoom.getValue() != null) {
-					    	listToAdd.addAll(timeRoom.getValue().belongsToCurricula);
+							List<Map.Entry<KeyDayTimeRoom,Course>> reduced_before = tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == (Timeslot - 1)).collect(Collectors.toList());
+					   // tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot - 1).forEach( timeRoom -> {
+							for(int z=0; z<reduced_before.size(); z++) {
+								List<Curriculum> listToAdd;
+								if (timeSlot_Curricula.get(Timeslot-1) != null ){
+					    	           listToAdd = timeSlot_Curricula.get(Timeslot-1);
+								}
+								else {
+								       listToAdd = new ArrayList<>();
+								}
+					    	if (reduced_before.get(z).getValue() != null) {
+					    		//System.out.println("the size of the curriculalist in the previous timeslot "+ reduced_before.get(z).getValue().belongsToCurricula.size());
+					    		List<Curriculum> myList = reduced_before.get(z).getValue().belongsToCurricula;
+					    	listToAdd.addAll(myList);
 					    	}
 					    	else{
 					    		listToAdd = new ArrayList<Curriculum>();
 					    	}
 					    	timeSlot_Curricula.put(Timeslot-1, listToAdd);
-					    });
+							}
+					  //  });
 					    tempSolution.entrySet().stream().filter(eintrag -> eintrag.getKey().Day == Day && eintrag.getKey().Timeslot == Timeslot).forEach( timeRoom -> {
-					    	List<Curriculum> listToAdd_ = timeSlot_Curricula.get(Timeslot);
+					    	List<Curriculum> listToAdd_;
+					    	if (timeSlot_Curricula.get(Timeslot) != null){
+					    	 listToAdd_ = timeSlot_Curricula.get(Timeslot);
+					    	}
+					    	else {
+					    		listToAdd_ = new ArrayList<>();
+					    	}
 					    	if (timeRoom.getValue() != null) {
 					    	listToAdd_.addAll(timeRoom.getValue().belongsToCurricula);
 					    	}
@@ -424,15 +488,16 @@ public class populationGeneration {
 		 course_rooms_map.put(chosenCourse[0],list_rooms);
 		 
 		 
+		 //Debug
+		 //System.out.println(" FIRST : Number of unassigned lectures of course "+ chosenCourse[0].courseID +" : "+ chosenCourse[0].numberOfUnassignedLectures);
 		 
+		 Integer unassignedLectures = listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures;
+		 listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures = unassignedLectures -1;
 		 
-		 listCurricula.stream().filter(curr -> curr.coursesThatBelongToCurr.contains(chosenCourse[0])).forEach(currr -> {
-			 //for each curriculum where the course takes place in, reduce the number of unassigned lectures in that course
-			 currr.coursesThatBelongToCurr.get(currr.coursesThatBelongToCurr.indexOf(chosenCourse[0])).numberOfUnassignedLectures -=1;
-		 });
-		 
-		 listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures -=1;
-		 
+		 //Debug
+		// System.out.println(" Info : the Course takes place in " + chosenCourse[0].belongsToCurricula.size() + " curricula");
+		// System.out.println(" SECOND : Number of unassigned lectures of course "+ chosenCourse[0].courseID +" : "+ chosenCourse[0].numberOfUnassignedLectures);
+		
 		 timeslotRoom_g_jk_map.clear();
 		 
 		 //tabuTimeslot_teacher
@@ -463,7 +528,44 @@ public class populationGeneration {
          } // while unfinished lectures still there
 		 //after no more unfinished lectures to assign or Abbruch Bedingung, assign tempSolution to population
          population.add(tempSolution);
-         i++;
+ 	    estimatedTime = System.nanoTime() - startTime;
+ 		System.out.println(i +"   "+ (double) estimatedTime / 1000000000.0 + " seconds for one member of population");
+		
 		} // for i<populationSize
+
+		long estimatedTimeWholePopulation = System.nanoTime() - startTimeWholePopulation;
+		System.out.println((double) estimatedTimeWholePopulation / 1000000000.0 + " seconds for the whole population of 50");
+		
+		// Debug - See Timetable
+	/*      listRooms.stream().forEach(roomie -> {
+			String RoomieID = roomie.getRoomID();
+			while (RoomieID.chars().count() <5) {
+				RoomieID += " ";
+			}
+			System.out.print("\n\nRoom " + RoomieID+ "    ");
+		for (int r=0;r<totalDays;r++) {
+			for (int e=0;e<timeslotsPerDay;e++) {
+				String cursoID = "Free";
+				Course curso = tempSolution.get(new KeyDayTimeRoom(r,e,roomie));
+				if (curso!= null) {
+					cursoID = curso.courseID.toString();
+					while (cursoID.chars().count() <4) {
+						cursoID += " ";
+					}
+				}
+				System.out.print(cursoID + "    " );
+			}
+		} 
+		});//roomie */
+		
+		//DEBUG - see all curricula in a day
+		/*tempSolution.entrySet().stream().filter(entry -> entry.getKey().getDay() == 2 && entry.getKey().getTimeslot() == 2).forEach(entry -> {
+			if (entry.getValue() != null) {
+			entry.getValue().belongsToCurricula.stream().forEach(curr -> System.out.print( curr.curriculumID + "  " ));
+			System.out.println("\n\n");
+			}
+		}); */
+		
+		
 	}//main
 }
