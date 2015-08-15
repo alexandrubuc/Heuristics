@@ -1,8 +1,8 @@
 package definitions;
 
 public class KeyDayTime implements Comparable<KeyDayTime>{
-public Integer Day = null;
-public Integer Timeslot = null;
+public int Day;
+public int Timeslot;
 
 public KeyDayTime(int day_in, int time_in) {
 	Day = day_in;
@@ -20,26 +20,26 @@ public int getTimeslot() {
 
 @Override 
 public int hashCode() {
-	return Day.hashCode() + Timeslot.hashCode();
+	return ((Integer)Day).hashCode() + ((Integer)Timeslot).hashCode();
 }
 
 @Override 
 public boolean equals(Object o) {
-	if (o == this) {return true;}
+	/*if (o == this) {return true;}
 	else if (o== null || !(o instanceof KeyDayTime)) {return false;}
-	
+	*/
 	KeyDayTime kdt = KeyDayTime.class.cast(o);
-	return (Day.equals(kdt.Day) && Timeslot.equals(kdt.Timeslot) );
+	return ((Day ==kdt.Day) && (Timeslot == kdt.Timeslot ));
 }
 
 public int compareTo(KeyDayTime kdt) {
 	if (kdt == this) { return 0;};
 	//Integer Day = null;
-	Day.compareTo(kdt.getDay());
+	((Integer)Day).compareTo(kdt.getDay());
 	if (Day != 0) {return Day;}
 	
 	//Integer Timeslot = null;
-	Timeslot.compareTo(kdt.getTimeslot());
+	((Integer)Timeslot).compareTo(kdt.getTimeslot());
 	if (Timeslot != 0) {return Timeslot;}
 	
 	return 0;
@@ -47,7 +47,7 @@ public int compareTo(KeyDayTime kdt) {
 
 @Override
 public String toString() {
-	return Day.toString() + " " + Timeslot.toString();
+	return ((Integer)Day).toString() + " " + ((Integer)Timeslot).toString();
 }
 
 }

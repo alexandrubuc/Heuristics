@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE instance SYSTEM "http://satt.diegm.uniud.it/ctt/cb_ctt.dtd">
+<!-- DOCTYPE instance SYSTEM "http://satt.diegm.uniud.it/ctt/cb_ctt.dtd" -->
 <instance name="Ing0809-1">
   <descriptor>
     <days value="5"/>

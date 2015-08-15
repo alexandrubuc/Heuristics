@@ -83,6 +83,7 @@ public class Parser {
 		populationGeneration.listCourses.stream().forEach(course -> course.belongsToCurricula = populationGeneration.currForCourse(course));
 		// still get the course constraints
 		getConstraints();
+		populationGeneration.numCourses = populationGeneration.listCourses.size();
 		
 	}
 

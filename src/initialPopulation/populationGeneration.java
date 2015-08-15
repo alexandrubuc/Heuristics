@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
+import java.util.HashSet;
 import definitions.Course;
 import definitions.Curriculum;
 import definitions.KeyDayTime;
 import definitions.KeyDayTimeRoom;
 import definitions.Room;
+import hilfsFunktionen.Funktionen;
+import memeticAlgo.Algorithm;
 import xmlParser.Parser;
 
 /**
@@ -41,8 +43,9 @@ public class populationGeneration {
 	 public static int timeslotsPerDay;
 	 public static int dailyLecturesMin;
 	 public static int dailyLecturesMax;
-	 public static int popSize = 5;
-	 
+	 public static int popSize = 2;
+	 public static int numCourses;
+
 	 public static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>(1000);
 	 static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>(50);
 	 
@@ -54,11 +57,14 @@ public class populationGeneration {
 	 static Map<Course, List<Integer>> course_day_map = new HashMap<>(100);
      //static Map<KeyDayTime, List<Curriculum>> soft_const_4_list = new HashMap<>(); 
 	 
-	 static Integer aps = 0;
-	 static Integer apd = 0;
+	 static int aps = 0;
+	 static int apd = 0;
 	 static List<KeyDayTime> checkedKDT = new ArrayList<>();
+
+
+
 	 
-	private static Integer[] calc_apd_aps (Course course_i, Map<KeyDayTimeRoom,Course> tempSol) {
+	private static int[] calc_apd_aps (Course course_i, Map<KeyDayTimeRoom,Course> tempSol) {
 		// apd = return the total number of available periods for course_i under the temporary solution tempSol
 		// aps = return the total number of available period-room positions for course_i under the temporary solution tempSol
 		
@@ -83,7 +89,7 @@ public class populationGeneration {
 				}
 			}
 		});
-		Integer[] apd_aps = {apd,aps};
+		int[] apd_aps = {apd,aps};
 		return apd_aps;
 	}
 	
@@ -215,7 +221,7 @@ public class populationGeneration {
 		 Course selectedCourse = null;
 		 // fill the maps with the courses and their corresponding apd and aps divided by the number of unassigned lectures
 		 listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).forEach((course) -> {
-		 Integer[] apd_aps = new Integer[2];
+		 int[] apd_aps = new int[2];
 	     apd_aps = calc_apd_aps(course,tempSolution);
 		 double unassignedLectures = course.numberOfUnassignedLectures;
 		 course_apd_i.putIfAbsent(course, apd_aps[0]/Math.sqrt(unassignedLectures));
@@ -236,8 +242,8 @@ public class populationGeneration {
 		 
 
 		// add all elements that have a value equal to min_apd
-		 List<Course> tieCourses_apd = new ArrayList<>();
-		 List<Course> tieCourses_aps = new ArrayList<>();
+		 List<Course> tieCourses_apd = new ArrayList<>(200);
+		 List<Course> tieCourses_aps = new ArrayList<>(200);
 		 
 		 for(Entry<Course, Double> entry : course_apd_i.entrySet()) {
 			 if (entry.getValue() - min_apd <= 0.00000000001 && entry.getValue() - min_apd >= -0.00000000001  ) {
@@ -379,7 +385,7 @@ public class populationGeneration {
 						//S3 minimum working days -> konstante a_3 = 5
 						if (course_day_map.get(chosenCourse[0]) == null || course_day_map.get(chosenCourse[0]).size() < chosenCourse[0].minWorkDays) {
 							
-							Integer days_in_map = null;
+							int days_in_map = 0;
 							if (course_day_map.get(chosenCourse[0]) == null) {
 								days_in_map = 0;
 								}
@@ -460,8 +466,9 @@ public class populationGeneration {
 		 
 		 //assign the kdtr with smallest value of g_jk
 		 //System.out.println(timeslotRoom_g_jk_map.size());
-		 KeyDayTimeRoom chosen_kdtr = timeslotRoom_g_jk_map.entrySet().stream().filter( entry__ -> entry__.getValue() - min_g_jk[0] < 0.0001).findAny().get().getKey();
-		 
+			 KeyDayTimeRoom chosen_kdtr = chosen_kdtr = timeslotRoom_g_jk_map.entrySet().stream().filter(entry__ -> entry__.getValue() - min_g_jk[0] < 0.0001).findAny().get().getKey();
+		   //Debug
+		   // System.out.println("chosen_kdtr : " + chosen_kdtr.toString());
 		 //implement the feasible lecture insertion
 		 tempSolution.putIfAbsent(chosen_kdtr, chosenCourse[0]);
 		 
@@ -469,12 +476,13 @@ public class populationGeneration {
 		 
 		 //update the map which keeps track of the days on which the course takes place
 		 
-		 List<Integer> list_days = new ArrayList<>(); 
+		 List<Integer> list_days = new ArrayList<>();
 		 
 		 if (course_day_map.get(chosenCourse[0]) != null) {
 			 list_days = course_day_map.get(chosenCourse[0]);
 		 }
 		 list_days.add(chosen_kdtr.Day);
+		 list_days = Funktionen.removeDuplicatesInteger(list_days);
 		 course_day_map.put(chosenCourse[0],list_days);
 		 
 		//update the map which keeps track of the days on which the course takes place
@@ -483,13 +491,14 @@ public class populationGeneration {
 		 list_rooms = course_rooms_map.get(chosenCourse[0]);
 		 }
 		 list_rooms.add(chosen_kdtr.getRoom());
+		 list_rooms = Funktionen.removeDuplicatesRoom(list_rooms);
 		 course_rooms_map.put(chosenCourse[0],list_rooms);
 		 
 		 
 		 //Debug
 		 //System.out.println(" FIRST : Number of unassigned lectures of course "+ chosenCourse[0].courseID +" : "+ chosenCourse[0].numberOfUnassignedLectures);
 		 
-		 Integer unassignedLectures = listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures;
+		 int unassignedLectures = listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures;
 		 listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures = unassignedLectures -1;
 		 
 		 //Debug
@@ -539,6 +548,12 @@ public class populationGeneration {
 		memeticAlgo.Algorithm.numDays = totalDays;
 		memeticAlgo.Algorithm.timeslotsPerDay = timeslotsPerDay;
 		memeticAlgo.Algorithm.popSize = popSize;
+		memeticAlgo.Algorithm.numCourses = numCourses;
+		memeticAlgo.Algorithm.numRooms = listRooms.size();
+		memeticAlgo.Algorithm.numCurricula = listCurricula.size();
+		memeticAlgo.Algorithm.roomList = listRooms;
+		memeticAlgo.Algorithm.CurriculumList = listCurricula;
+
 		// Debug - See Timetable
 	 /*     listRooms.stream().forEach(roomie -> {
 			String RoomieID = roomie.getRoomID();
