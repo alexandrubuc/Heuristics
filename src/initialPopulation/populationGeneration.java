@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.HashSet;
+import java.util.Set;
 import java.text.DecimalFormat;
 import definitions.Course;
 import definitions.Curriculum;
@@ -65,7 +66,6 @@ public class populationGeneration {
 	 static Map<KeyDayTimeRoom, Double> timeslotRoom_g_jk_map = new HashMap<>(1000);
 	 static Map<Course, List<Room>> course_rooms_map = new HashMap<>(100);
 	 static Map<Course, List<Integer>> course_day_map = new HashMap<>(100);
-     //static Map<KeyDayTime, List<Curriculum>> soft_const_4_list = new HashMap<>(); 
 	 
 	 static int aps = 0;
 	 static int apd = 0;
@@ -159,7 +159,7 @@ public class populationGeneration {
 		replicateCoursesFromListCoursestoListCurricula();
 		
 		long estimatedTime = System.nanoTime() - startTime;
-		System.out.println((double) estimatedTime / 1000000000.0 + " seconds for importing the dataset from XML");
+		System.out.println((double) estimatedTime / 1000000000.0 + " seconds for importing the dataset from XML\n");
 			initializeTempSolutionToNull();
 
 
@@ -187,6 +187,7 @@ public class populationGeneration {
 		  */
 
 		for (int i=0; i < popSize; i++) {
+
          tempSolution.clear();
          initializeTempSolutionToNull();
          tabuTimeslot_teacher.clear();
@@ -656,22 +657,12 @@ public class populationGeneration {
 
          } // while unfinished lectures still there
 		 //after no more unfinished lectures to assign or Abbruch Bedingung, assign tempSolution to population
-         population.add(tempSolution);
 
-        //Debug
-
-        tempSolution.entrySet().stream().forEach(entry -> {
-            if (entry.getValue() != null && entry.getValue().courseID == 980) {
-                //System.out.println("Allelujah! " + entry.getKey().getDay() + " " + entry.getKey().getTimeslot() + " " + entry.getKey().getRoom().getRoomID());
-            }
-            try {
-                Thread.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-
+         // to avoid having N copies of tempSolution in the population due to tempSolution being static
+            Map<KeyDayTimeRoom,Course> localCopy_Map = new HashMap<>(tempSolution.size());
+            tempSolution.entrySet().stream().forEach(entry ->
+                            localCopy_Map.put(entry.getKey(), entry.getValue()));
+            population.add(localCopy_Map);
 
  	    estimatedTime = System.nanoTime() - startTime;
  		System.out.println(i +"   "+ (double) estimatedTime / 1000000000.0 + " seconds for one member of population");
@@ -683,9 +674,7 @@ public class populationGeneration {
 
 
 		// Debug
-		//System.out.println("Same collection is the same : "+ Funktionen.MapisEqual(population.get(1),population.get(1)));
-
-		for(int g=1;g<population.size(); g++) {
+		/*for(int g=1;g<population.size(); g++) {
 			Map<KeyDayTimeRoom,Course> mappy_1 = population.get(g);
 			Map<KeyDayTimeRoom,Course> mappy_2 = population.get(g-1);
 			if (  Funktionen.MapisEqual(mappy_1, mappy_2)) {
@@ -694,7 +683,7 @@ public class populationGeneration {
 			else {
 				System.out.println("popGen:The solutions are not all the same!!!");
 			}
-		}
+		}*/
 
 		long estimatedTimeWholePopulation = System.nanoTime() - startTimeWholePopulation;
 		System.out.println((double) estimatedTimeWholePopulation / 1000000000.0 + " seconds for the whole population of " +popSize);
@@ -713,7 +702,9 @@ public class populationGeneration {
 
 
 		// Debug - See Timetable
-		population.stream().forEach(map -> {
+/*
+            for (int i=0; i<population.size();i++) {
+            final int j = i;
             listRooms.stream().forEach(roomie -> {
                 String RoomieID = roomie.getRoomID();
                 while (RoomieID.chars().count() < 5) {
@@ -723,29 +714,52 @@ public class populationGeneration {
                 for (int r = 0; r < totalDays; r++) {
                     for (int e = 0; e < timeslotsPerDay; e++) {
                         String cursoID = "Free";
-                        Course curso = map.get(new KeyDayTimeRoom(r, e, roomie));
+                        Course curso = population.get(j).get(new KeyDayTimeRoom(r, e, roomie));
+                        Integer teachie = 0000;
                         if (curso != null) {
                             cursoID = curso.courseID.toString();
                             while (cursoID.chars().count() < 4) {
                                 cursoID += " ";
                             }
+                            teachie = curso.teacherID;
                         }
+
                         System.out.print(cursoID + "    ");
                     }
                 }
             }); //roomie
 
             System.out.print("\n\n\n\n\n\n\n");
-        }); //population for each stream
+        }  //population for
+        */
 
 
-		//DEBUG - see all curricula in a day
-		/*tempSolution.entrySet().stream().filter(entry -> entry.getKey().getDay() == 2 && entry.getKey().getTimeslot() == 2).forEach(entry -> {
-			if (entry.getValue() != null) {
-			entry.getValue().belongsToCurricula.stream().forEach(curr -> System.out.print( curr.curriculumID + "  " ));
-			System.out.println("\n\n");
-			}
-		}); */
+
+		//DEBUG - curicula collisions
+        /*    for (int d=0;d<totalDays;d++) {
+                for (int t=0;t<timeslotsPerDay;t++) {
+                    int[] Day = new int[1];
+                    int[] Timeslot = new int[1];
+                    Day[0] = d;
+                    Timeslot[0] = t;
+                    List<Curriculum> lista = new ArrayList<Curriculum>();
+                    tempSolution.entrySet().stream().filter(entry -> entry.getKey().getDay() == Day[0] && entry.getKey().getTimeslot() == Timeslot[0]).forEach(entry -> {
+                        if (entry.getValue() != null) {
+                            entry.getValue().belongsToCurricula.stream().forEach(curr -> lista.add(curr));
+                            if (entry.getValue().constraintsRoom.contains(entry.getKey().assignedRoom)) {
+                                System.out.println("Room constraints violated");
+                            }
+                            if (entry.getValue().constraintsTimeslot.contains(new KeyDayTime(Day[0],Timeslot[0]))) {
+                                System.out.println("Timeslot constraints violated");
+                            }
+                        }
+                    });
+                    Set<Curriculum>  set = new HashSet<Curriculum>(lista);
+                    if (set.size() < lista.size()) {
+                        System.out.print("Double curricula in day "+d+" and timeslot "+t);
+                    }
+                }
+            }*/
 		
 		
 	}//main

@@ -2,23 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1bc6f58-0768-4027-8f16-52031b0ce209" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/memeticAlgo/Algorithm.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/memeticAlgo/Algorithm.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/definitions/Course.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/definitions/Course.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/hilfsFunktionen/Funktionen.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/hilfsFunktionen/Funktionen.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/definitions/KeyDayTime.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/definitions/KeyDayTime.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/definitions/KeyDayTimeRoom.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/definitions/KeyDayTimeRoom.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/xmlParser/Parser.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/xmlParser/Parser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/definitions/Room.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/definitions/Room.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/TabuSearch/initialPopulation/populationGeneration.class" afterPath="$PROJECT_DIR$/out/production/TabuSearch/initialPopulation/populationGeneration.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/memeticAlgo/Algorithm.java" afterPath="$PROJECT_DIR$/src/memeticAlgo/Algorithm.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/definitions/Course.java" afterPath="$PROJECT_DIR$/src/definitions/Course.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/hilfsFunktionen/Funktionen.java" afterPath="$PROJECT_DIR$/src/hilfsFunktionen/Funktionen.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/definitions/KeyDayTime.java" afterPath="$PROJECT_DIR$/src/definitions/KeyDayTime.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java" afterPath="$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/xmlParser/Parser.java" afterPath="$PROJECT_DIR$/src/xmlParser/Parser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/definitions/Room.java" afterPath="$PROJECT_DIR$/src/definitions/Room.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/initialPopulation/populationGeneration.java" afterPath="$PROJECT_DIR$/src/initialPopulation/populationGeneration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TabuSearch.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -52,13 +38,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="populationGeneration.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="populationGeneration.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/initialPopulation/populationGeneration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4085213">
-              <caret line="728" column="26" selection-start-line="728" selection-start-column="26" selection-end-line="728" selection-end-column="26" />
+            <state vertical-scroll-proportion="-3.9629629">
+              <caret line="159" column="8" selection-start-line="159" selection-start-column="8" selection-end-line="159" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractCollection.java" pinned="false" current-in-tab="false">
+        <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/src.zip!/java/util/AbstractCollection.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
+              <folding>
+                <element signature="e#8824#8825#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -77,11 +75,13 @@
       <file leaf-file-name="KeyDayTimeRoom.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.9259257">
-              <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state vertical-scroll-proportion="-1.5925926">
+              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="35" selection-end-column="1" />
               <folding>
                 <element signature="e#378#379#0" expanded="true" />
                 <element signature="e#392#393#0" expanded="true" />
+                <element signature="e#524#525#0" expanded="true" />
+                <element signature="e#618#619#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,29 +102,22 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-              <folding>
-                <element signature="e#223#224#0" expanded="false" />
-                <element signature="e#237#238#0" expanded="false" />
-                <element signature="e#265#266#0" expanded="false" />
-                <element signature="e#285#286#0" expanded="false" />
-                <element signature="e#322#323#0" expanded="false" />
-                <element signature="e#392#393#0" expanded="false" />
-                <element signature="e#978#979#0" expanded="false" />
-                <element signature="e#1054#1055#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Algorithm.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Algorithm.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/memeticAlgo/Algorithm.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="756" column="45" selection-start-line="756" selection-start-column="45" selection-end-line="756" selection-end-column="45" />
+            <state vertical-scroll-proportion="0.51119405">
+              <caret line="436" column="103" selection-start-line="436" selection-start-column="103" selection-end-line="436" selection-end-column="103" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
                 <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+                <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+                <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -134,10 +127,11 @@
         <entry file="file://$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="123" column="19" selection-start-line="123" selection-start-column="19" selection-end-line="123" selection-end-column="19" />
+              <caret line="118" column="16" selection-start-line="118" selection-start-column="16" selection-end-line="118" selection-end-column="21" />
               <folding>
                 <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
                 <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+                <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
                 <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
                 <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
                 <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -167,15 +161,15 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/Parser.java" />
-        <option value="$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml" />
         <option value="$PROJECT_DIR$/src/xmlParser/Parser.java" />
         <option value="$PROJECT_DIR$/src/definitions/KeyDayTime.java" />
         <option value="$PROJECT_DIR$/src/definitions/Room.java" />
-        <option value="$PROJECT_DIR$/src/memeticAlgo/Algorithm.java" />
         <option value="$PROJECT_DIR$/src/hilfsFunktionen/Funktionen.java" />
         <option value="$PROJECT_DIR$/src/definitions/Course.java" />
-        <option value="$PROJECT_DIR$/src/initialPopulation/populationGeneration.java" />
         <option value="$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java" />
+        <option value="$PROJECT_DIR$/src/memeticAlgo/Algorithm.java" />
+        <option value="$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml" />
+        <option value="$PROJECT_DIR$/src/initialPopulation/populationGeneration.java" />
       </list>
     </option>
   </component>
@@ -402,7 +396,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.49722221" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3962766" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15425532" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.50277776" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -412,7 +406,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24166666" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3643617" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21409574" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -464,21 +458,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/initialPopulation/populationGeneration.java</url>
-          <line>584</line>
-          <properties />
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/initialPopulation/populationGeneration.java</url>
-          <line>725</line>
-          <properties />
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="21" />
+      <option name="time" value="22" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -491,18 +471,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/memeticAlgo/Algorithm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="165" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
-            <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -510,6 +478,7 @@
           <folding>
             <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -549,16 +518,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -570,6 +530,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -581,6 +543,7 @@
           <folding>
             <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -620,16 +583,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -641,6 +595,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -652,6 +608,7 @@
           <folding>
             <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -691,16 +648,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -712,6 +660,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -723,6 +673,7 @@
           <folding>
             <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -761,16 +712,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -782,6 +724,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -793,6 +737,7 @@
           <folding>
             <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
             <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
@@ -831,16 +776,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -852,6 +788,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -887,16 +825,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="64" selection-start-line="49" selection-start-column="64" selection-end-line="49" selection-end-column="64" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -908,6 +837,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -926,16 +857,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="29" column="6" selection-start-line="29" selection-start-column="6" selection-end-line="29" selection-end-column="6" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -947,6 +869,8 @@
             <element signature="imports" expanded="true" />
             <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
             <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -976,37 +900,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/definitions/KeyDayTime.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding>
-            <element signature="e#223#224#0" expanded="false" />
-            <element signature="e#237#238#0" expanded="false" />
-            <element signature="e#265#266#0" expanded="false" />
-            <element signature="e#285#286#0" expanded="false" />
-            <element signature="e#322#323#0" expanded="false" />
-            <element signature="e#392#393#0" expanded="false" />
-            <element signature="e#978#979#0" expanded="false" />
-            <element signature="e#1054#1055#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="123" column="19" selection-start-line="123" selection-start-column="19" selection-end-line="123" selection-end-column="19" />
-          <folding>
-            <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
-            <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
-            <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
-            <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
-            <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/src.zip!/java/util/function/Predicate.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.33333334">
@@ -1015,22 +908,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/memeticAlgo/Algorithm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="756" column="45" selection-start-line="756" selection-start-column="45" selection-end-line="756" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
-            <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/hilfsFunktionen/Funktionen.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5081967">
           <caret line="72" column="17" selection-start-line="72" selection-start-column="17" selection-end-line="72" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Input_Daten/UniUD_xml/Udine1.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="118" column="16" selection-start-line="118" selection-start-column="16" selection-end-line="118" selection-end-column="21" />
+          <folding>
+            <element signature="n#rooms#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#0;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#curriculum#1;n#curricula#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#constraint#0;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#constraint#1;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
+            <element signature="n#constraint#2;n#constraints#0;n#instance#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/definitions/KeyDayTime.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1043,6 +947,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.5925926">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="35" selection-end-column="1" />
+          <folding>
+            <element signature="e#378#379#0" expanded="true" />
+            <element signature="e#392#393#0" expanded="true" />
+            <element signature="e#524#525#0" expanded="true" />
+            <element signature="e#618#619#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/definitions/Course.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.925926">
@@ -1051,23 +968,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/definitions/KeyDayTimeRoom.java">
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/src.zip!/java/util/AbstractCollection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.9259257">
-          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="261" column="0" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
           <folding>
-            <element signature="e#378#379#0" expanded="true" />
-            <element signature="e#392#393#0" expanded="true" />
+            <element signature="e#8824#8825#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/initialPopulation/populationGeneration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4085213">
-          <caret line="728" column="26" selection-start-line="728" selection-start-column="26" selection-end-line="728" selection-end-column="26" />
+        <state vertical-scroll-proportion="-3.9629629">
+          <caret line="159" column="8" selection-start-line="159" selection-start-column="8" selection-end-line="159" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/memeticAlgo/Algorithm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.51119405">
+          <caret line="436" column="103" selection-start-line="436" selection-start-column="103" selection-end-line="436" selection-end-column="103" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#calcPenaltyScore#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_HARD#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#calcPenaltyScore_SOFT#0;class#Algorithm#0" expanded="false" />
+            <element signature="method#applyNBS#0;class#Algorithm#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -434,6 +434,8 @@ public class Algorithm {
 
 
 		//Debug
+		solution_score_map.entrySet().stream().forEach(solu -> System.out.println("Score of solution "+solu.getValue()));
+		//Debug
 		/*System.out.println("popSize "+popSize);
 		System.out.println("populationSize " +population.size());
 		System.out.println("solution_score_map "+solution_score_map.size()); // only 1 inside?

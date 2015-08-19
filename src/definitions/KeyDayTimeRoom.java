@@ -30,10 +30,10 @@ public Room getRoom() {
 	return assignedRoom;
 }
 
-/*@Override
+@Override
 public int hashCode() {
-	return Day.hashCode() + Timeslot.hashCode() + assignedRoom.hashCode();
-}*/
+	return 567345*Day.hashCode() + 345345*Timeslot.hashCode() + 23453*assignedRoom.hashCode();
+}
 
 
 @Override 
