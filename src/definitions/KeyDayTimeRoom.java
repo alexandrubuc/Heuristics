@@ -30,10 +30,11 @@ public Room getRoom() {
 	return assignedRoom;
 }
 
-@Override 
+/*@Override
 public int hashCode() {
 	return Day.hashCode() + Timeslot.hashCode() + assignedRoom.hashCode();
-}
+}*/
+
 
 @Override 
 public boolean equals(Object o) {
@@ -41,8 +42,9 @@ public boolean equals(Object o) {
 	else if (o== null || !(o instanceof KeyDayTimeRoom)) {return false;}
 	
 	KeyDayTimeRoom kdtr = KeyDayTimeRoom.class.cast(o);
-	return (Day.equals(kdtr.Day) && Timeslot.equals(kdtr.Timeslot) && assignedRoom.roomID.equals(kdtr.assignedRoom.roomID) && assignedRoom.roomCapacity.equals(kdtr.assignedRoom.roomCapacity));
+	return (Day == kdtr.Day && Timeslot == kdtr.Timeslot && assignedRoom.roomID.equals(kdtr.assignedRoom.roomID) && assignedRoom.roomCapacity == kdtr.assignedRoom.roomCapacity && assignedRoom.getBuilding().equals(kdtr.assignedRoom.getBuilding()));
 }
+
 
 public int compareTo(KeyDayTimeRoom kdtr) {
 	if (kdtr == this) { return 0;};

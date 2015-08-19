@@ -35,4 +35,20 @@ public Course(int id, int teach, int num_of_lec, int minDays,int students_,Boole
 	students = students_;
 	doubleLectures = doubleLectures_;
 }
+	@Override
+	public int hashCode() {
+		return courseID.hashCode() + teacherID.hashCode() + numberOfLectures.hashCode() + numberOfUnassignedLectures.hashCode() + minWorkDays.hashCode() + students.hashCode() + doubleLectures.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {return true;}
+		if (this == null && o == null) {return true;}
+		else if (o== null || !(o instanceof Course)) {
+			return false;}
+
+		Course curso = Course.class.cast(o);
+		return (courseID.equals(curso.courseID) && teacherID.equals(curso.teacherID) && numberOfLectures.equals(curso.numberOfLectures) && numberOfUnassignedLectures.equals(curso.numberOfUnassignedLectures) &&minWorkDays.equals(curso.minWorkDays) && students.equals(curso.students) && doubleLectures.equals(curso.doubleLectures));
+	}
+
 }

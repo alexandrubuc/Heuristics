@@ -13,6 +13,7 @@ import definitions.Curriculum;
 import definitions.KeyDayTime;
 import definitions.KeyDayTimeRoom;
 import definitions.Room;
+import initialPopulation.populationGeneration;
 import memeticAlgo.Algorithm;
 import xmlParser.Parser;
 /**
@@ -61,5 +62,31 @@ public class Funktionen {
         return result;
     }
 
+    public static boolean MapisEqual(Map<KeyDayTimeRoom, Course> map1, Map<KeyDayTimeRoom, Course> map2) {
 
-}
+        for (KeyDayTimeRoom i : map1.keySet()) {
+
+            if (map2.keySet().contains(i)) {
+                // if  ( (map1.get(i) == null && map2.get(i) != null)  ||  (map2.get(i) == null && map1.get(i) != null) || (map1.get(i).equals(map2.get(i))== false ) ) {
+                if ((map1.get(i) == null && map2.get(i) != null) || (map2.get(i) == null && map1.get(i) != null)) {
+                    return false;
+                }
+                if (map1.get(i) != null && map2.get(i) != null && (map1.get(i).courseID == map2.get(i).courseID) == false) {
+                    return false;
+                }
+            } else {
+                if ((map1.get(i) == null && map2.get(i) != null) || (map2.get(i) == null && map1.get(i) != null)) {
+                    return false;
+                }
+            }
+
+        }
+        return true;
+    }
+
+
+
+    }
+
+
+

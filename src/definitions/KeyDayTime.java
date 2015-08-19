@@ -25,9 +25,9 @@ public int hashCode() {
 
 @Override 
 public boolean equals(Object o) {
-	/*if (o == this) {return true;}
+	if (o == this) {return true;}
 	else if (o== null || !(o instanceof KeyDayTime)) {return false;}
-	*/
+
 	KeyDayTime kdt = KeyDayTime.class.cast(o);
 	return ((Day ==kdt.Day) && (Timeslot == kdt.Timeslot ));
 }

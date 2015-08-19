@@ -144,8 +144,8 @@ public class Parser {
 		for(int i = 0; i < numberofrooms;i++){
 			e = (Element) nList.item(i);
 
-			building = e.getAttribute("building");
-			ID = e.getAttribute("id");
+			building =  e.getAttribute("building");
+			ID =  e.getAttribute("id");
 			size = Integer.parseInt(e.getAttribute("size"));
 
 			populationGeneration.listRooms.add(new Room(ID, size, building));
