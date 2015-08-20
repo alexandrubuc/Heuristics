@@ -25,7 +25,7 @@ public Room(String id, int capacity, String building) {
 
 	@Override
 	public int hashCode() {
-		return ((String)roomID).hashCode() + ((Integer)roomCapacity).hashCode() +((String) Building).hashCode();
+		return ((String)roomID).hashCode()*3453 + 12434*((Integer)roomCapacity).hashCode() +12412*((String) Building).hashCode();
 	}
 
 	@Override

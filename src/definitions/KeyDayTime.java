@@ -20,7 +20,7 @@ public int getTimeslot() {
 
 @Override 
 public int hashCode() {
-	return ((Integer)Day).hashCode() + ((Integer)Timeslot).hashCode();
+	return 46756*((Integer)Day).hashCode() + 234234*((Integer)Timeslot).hashCode();
 }
 
 @Override 

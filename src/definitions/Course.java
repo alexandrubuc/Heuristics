@@ -37,7 +37,7 @@ public Course(int id, int teach, int num_of_lec, int minDays,int students_,Boole
 }
 	@Override
 	public int hashCode() {
-		return courseID.hashCode() + teacherID.hashCode() + numberOfLectures.hashCode() + numberOfUnassignedLectures.hashCode() + minWorkDays.hashCode() + students.hashCode() + doubleLectures.hashCode();
+		return 4353*courseID.hashCode() + 234*teacherID.hashCode() + 45645*numberOfLectures.hashCode() + numberOfUnassignedLectures.hashCode() + minWorkDays.hashCode() + students.hashCode() + doubleLectures.hashCode();
 	}
 
 	@Override

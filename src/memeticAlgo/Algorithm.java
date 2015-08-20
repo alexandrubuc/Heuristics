@@ -10,11 +10,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.Queue;
 import java.util.LinkedList;
-import definitions.Course;
-import definitions.Curriculum;
-import definitions.KeyDayTime;
-import definitions.KeyDayTimeRoom;
-import definitions.Room;
+
+import definitions.*;
 import hilfsFunktionen.Funktionen;
 import xmlParser.Parser;
 import initialPopulation.populationGeneration;
@@ -28,7 +25,7 @@ public class Algorithm {
 	 public static Map<KeyDayTimeRoom,Course> grandchild_a = new HashMap<>(1000);
 	 public static Map<KeyDayTimeRoom,Course> grandchild_b = new HashMap<>(1000);
 	 public static Map<KeyDayTimeRoom,Course> S_best = new HashMap<>(1000);
-	 public static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>(50);
+	 public static List<Map<KeyDayTimeRoom,Course>> population = new ArrayList<>(populationGeneration.popSize);
 	 public static double crossoverRate = 0.8;
 	 public static double mutationRate = 0.04;
 	 public static int numDays;
@@ -183,13 +180,10 @@ public class Algorithm {
 			kdt_banned_Curr_map.put(new_kdt,new_Curr);
 
 			List<Integer> old_teach = kdt_banned_Teach_map.get(new_kdt);
-			if (old_teach != null) {
-				old_teach.add(entry.getValue().teacherID);
+			if (old_teach == null) {
+                old_teach = new ArrayList<Integer>(timeslotsPerDay*numRooms);
 			}
-			else {
-				old_teach = new ArrayList<Integer>(timeslotsPerDay*numRooms);
-				old_teach.add(entry.getValue().teacherID);
-			}
+            old_teach.add(entry.getValue().teacherID);
 			kdt_banned_Teach_map.put(new_kdt, old_teach);
 	});
 
@@ -209,14 +203,12 @@ public class Algorithm {
 			case 1:
 			{
 				// select two events at random and swap timeslots
+                //try at most 50 times
 				int r = 0;
 				while (done != true && r<50) {
 					r=r+1;
-					//get new two courses until the feasibility condition is satisfied
+					//get new two courses until the feasibility condition is satisfied, doesn't prevent repetitions in the timeslot pairs
 					do {
-						//Debug
-						//System.out.println("Shiiiiiiit NBS1");
-
 						kdtr_one = new KeyDayTimeRoom(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay), roomList.get(rangen.nextInt(roomList.size())));
 						kdt_one = new KeyDayTime(kdtr_one.getDay(), kdtr_one.getTimeslot());
 						kdtr_two = new KeyDayTimeRoom(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay), roomList.get(rangen.nextInt(roomList.size())));
@@ -224,6 +216,7 @@ public class Algorithm {
 						course_one = solution.get(kdtr_one);
 						course_two = solution.get(kdtr_two);
 					} while (course_one == null || course_two == null);
+
 					Boolean feasible_one = false;
 					Boolean feasible_two = false;
 
@@ -261,14 +254,13 @@ public class Algorithm {
 				//select one event at random and move it to a feasible timeslot
 				Boolean passendesGefunden = false;
 				int i=0;
-					do {
+                while (i<50 &&  passendesGefunden == false) {
 						i=i+1;
 						do {
 							kdtr_one = new KeyDayTimeRoom(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay), roomList.get(rangen.nextInt(roomList.size())));
 							//Debug
 							//System.out.println("Shiiiiiiit NBS2");
 						} while (solution.get(kdtr_one) == null);
-						//kdtr_one = new KeyDayTimeRoom(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay), roomList.get(rangen.nextInt(roomList.size())));
 						kdt_one = new KeyDayTime(kdtr_one.getDay(), kdtr_one.getTimeslot());
 						final Course course_insert = solution.get(kdtr_one);
 						List<Map.Entry<KeyDayTimeRoom,Course>> null_list= solution.entrySet().stream().filter(entry -> entry.getValue() == null).collect(Collectors.toList());
@@ -279,11 +271,6 @@ public class Algorithm {
 								KeyDayTime kdt_null = new KeyDayTime(entry.getKey().getDay(), entry.getKey().getTimeslot());
 								KeyDayTimeRoom kdtr_null = entry.getKey();
 								//checked for banned curricula and banned teachers
-								//Debug
-								//System.out.println(kdt_banned_Curr_map.get(kdt_null).size());
-								//System.out.println(course_insert.belongsToCurricula);
-								//System.out.println(kdt_banned_Teach_map.get(kdt_null).size());
-
 
 								if (kdt_banned_Curr_map.get(kdt_null) == null || Collections.disjoint(kdt_banned_Curr_map.get(kdt_null), course_insert.belongsToCurricula)) {
 									if (kdt_banned_Teach_map.get(kdt_null) == null || kdt_banned_Teach_map.get(kdt_null).contains(course_insert.teacherID) == false) {
@@ -305,7 +292,7 @@ public class Algorithm {
 						}
 						//Debug
 						//System.out.println("Still in NBS2 -- " + i);
-					} while (i<50 &&  passendesGefunden == false);
+					}
 
 
 				break;
@@ -316,22 +303,26 @@ public class Algorithm {
 				done = false;
 				Boolean erfolg_one = true;
 				Boolean erfolg_two = true;
-				do {
-					//Debug
-					//System.out.println("Shiiiiiiit NBS3");
-					kdt_one = new KeyDayTime(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay));
-					kdt_two = new KeyDayTime(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay));
-				} while(kdt_one == kdt_two);
+                int howManyRooms = roomList.size();
 
 				int j = 0;
-				do {
+                outerworld: while (done == false && j<50) {
 					j=j+1;
 					erfolg_one = true;
 					erfolg_two = true;
 
-					outer:for(int s=0;s<solution.size();s++) {
-						for (int w=0;w<numRooms;w++) {
-							Course course_ = solution.get(new KeyDayTimeRoom(kdt_one.getDay(),kdt_one.getTimeslot(),roomList.get(w)));
+                    int u=0;
+                    do {
+                        u = u+1;
+                        kdt_one = new KeyDayTime(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay));
+                        kdt_two = new KeyDayTime(rangen.nextInt(numDays), rangen.nextInt(timeslotsPerDay));
+                        if (u== 19) {
+                            break outerworld;
+                        }
+                    } while(kdt_one == kdt_two && u<20);
+
+					outer:for(int s=0;s<howManyRooms;s++) {
+							Course course_ = solution.get(new KeyDayTimeRoom(kdt_one.getDay(),kdt_one.getTimeslot(),roomList.get(s)));
 							if (course_ != null) {
 								// if the course is not zero, check for timeslot constraints regarding kdt_two
 								if (course_.constraintsTimeslot.contains(kdt_two)) {
@@ -339,29 +330,27 @@ public class Algorithm {
 									break outer;
 								}
 							}
-						}
+
 					}
 
 					//try with the second one only if erfolg_one = true
 					if (erfolg_one == true) {
-						outer:for(int s=0;s<solution.size();s++) {
-							for (int w=0;w<numRooms;w++) {
-								Course course_ = solution.get(new KeyDayTimeRoom(kdt_two.getDay(),kdt_two.getTimeslot(),roomList.get(w)));
+						outer_:for(int s=0;s<howManyRooms;s++) {
+								Course course_ = solution.get(new KeyDayTimeRoom(kdt_two.getDay(),kdt_two.getTimeslot(),roomList.get(s)));
 								if (course_ != null) {
 									// if the course is not zero, check for timeslot constraints regarding kdt_one
 									if (course_.constraintsTimeslot.contains(kdt_one)) {
 										erfolg_two = false;
-										break outer;
+										break outer_;
 									}
 								}
-							}
 						}
 					}
 
 					if (erfolg_one && erfolg_two) {
 						done = true;
 						//perform swap of courses
-						for (int e=0; e<numRooms; e++) {
+						for (int e=0; e<howManyRooms; e++) {
 							KeyDayTimeRoom kdtr_first = new KeyDayTimeRoom(kdt_one.getDay(),kdt_one.getTimeslot(),roomList.get(e));
 							KeyDayTimeRoom kdtr_second = new KeyDayTimeRoom(kdt_two.getDay(),kdt_two.getTimeslot(),roomList.get(e));
 							Course zwischenSpeicher = null;
@@ -370,9 +359,7 @@ public class Algorithm {
 							solution.put(kdtr_second,zwischenSpeicher);
 						}
 					}
-					//Debug
-					//System.out.println("still stuck in NBS 3 -- " + j);
-				} while (done == false && j<50); // wir versuchen es bis es klappt, aber maximal 50 mal. Achtung keine Verhinderung der Wiederholung mit den gleichen timeslots.
+				}
 
 				break;
 			case 4:
@@ -405,12 +392,8 @@ public class Algorithm {
 	 */
 
 
-
-
 	public static void main(String[] args) {
 
-		//Debug
-		//System.out.println("You just entered the world of memeticAlgo!!");
 		/**
 		 * Call the main method of the populationGeneration class so as so generate the starting population == the parents
 		 * have the main method copy the population into local population here, numDays and timeslotsPerDay
@@ -423,44 +406,32 @@ public class Algorithm {
 		initialPopulation.populationGeneration.main_(useless_args);
 
 		//may need to change it
-		int tabuSize = 7;
+		int tabuSize = 2;
 
 		/**
 		 * choose a best solution from the population, S_best
 		 */
 
-		Map<Map<KeyDayTimeRoom,Course>,Integer> solution_score_map = new HashMap<>(popSize+4); // popsize + 4 because of the 4 children and grandchildren who come after each round, before removing the weakest
-		population.stream().forEach(solu -> solution_score_map.put(solu, calcPenaltyScore(solu)));
+		List<SolutionScore> solution_score_list = new ArrayList<>(popSize+4); // popsize + 4 because of the 4 children and grandchildren who come after each round, before removing the weakest
+		population.stream().forEach(solu -> solution_score_list.add(new SolutionScore(solu, calcPenaltyScore(solu))));
 
 
 		//Debug
-		solution_score_map.entrySet().stream().forEach(solu -> System.out.println("Score of solution "+solu.getValue()));
-		//Debug
-		/*System.out.println("popSize "+popSize);
-		System.out.println("populationSize " +population.size());
-		System.out.println("solution_score_map "+solution_score_map.size()); // only 1 inside?
-		//since only one inside of solution_score_map, check if in population always the same map
-		population.forEach(entry -> System.out.println("HashCode of entry "+  +entry.hashCode()));
-		for(int g=1;g<population.size(); g++) {
-			if (population.get(g).equals(population.get(g-1))) {
-				System.out.println("Solution "+g+" equals "+ (g-1));
-			}
-			else {
-				System.out.println("The solutions are not all the same!!!");
-			}
-		}
-*/
-
+		solution_score_list.forEach(solu -> System.out.println("Score of solution " + solu.getScore()));
 
 		/**
 		 * get solution with minimum score
 		 */
 		final Integer[] S_best_Min = new Integer[1];
-		S_best_Min[0] = Collections.min(solution_score_map.values());
+        S_best_Min[0] = 1000;
+        for (SolutionScore ss : solution_score_list) {
+            int ssscore = ss.getScore();
+            S_best_Min[0] = (ssscore<S_best_Min[0])? ssscore : S_best_Min[0];
+        }
 
-		S_best =	solution_score_map.entrySet().stream().filter(entry -> entry.getValue() == S_best_Min[0]).findAny().get().getKey();
+		S_best = solution_score_list.stream().filter(entry -> entry.getScore() == S_best_Min[0]).findAny().get().getSolution();
 		//Debug
-		System.out.println("The score of S_best solution is "+ Integer.toString(S_best_Min[0]));
+		//System.out.println("The score of S_best solution is "+ Integer.toString(S_best_Min[0]));
 
 		/**
 		 * create empty tabu list with TabuSize, T_list, where the Neighbourhood Structures will be stored
@@ -511,12 +482,14 @@ public class Algorithm {
 				/**
 				 *  try to insert all events from crossDay_A and crossTimeslot_A from parent A in parent B to produce child B
 				 */
-				child_b = parent_b;
+                for( Map.Entry<KeyDayTimeRoom,Course> entry : parent_b.entrySet()) {
+                    child_b.put(entry.getKey(),entry.getValue());
+                }
 				// check first if/how many and which places are even available (course still null) in parent_b in the corresponding day and timeslots
 				final List<Map.Entry<KeyDayTimeRoom, Course>> correspondingDay_entries = child_b.entrySet().stream().filter(entry -> entry.getKey().getDay() == crossDay_B && entry.getKey().getTimeslot() == crossTimeslot_B).collect(Collectors.toList());
 				List<Map.Entry<KeyDayTimeRoom, Course>> available_entries = correspondingDay_entries.stream().filter(entry -> entry.getValue() == null).collect(Collectors.toList());
 				// select the entries which may be inserted
-				final List<Map.Entry<KeyDayTimeRoom, Course>> insert_entries = parent_a.entrySet().stream().filter(entry -> entry.getKey().getDay() == crossDay_A && entry.getKey().getTimeslot() == crossTimeslot_A).collect(Collectors.toList());
+				final List<Map.Entry<KeyDayTimeRoom, Course>> insert_entries = parent_a.entrySet().stream().filter(entry -> entry.getKey().getDay() == crossDay_A && entry.getKey().getTimeslot() == crossTimeslot_A).filter(entry -> entry.getValue() != null).collect(Collectors.toList());
 
 
 				List<Course> remove_one_in_child_b = new ArrayList<>(50);
@@ -535,13 +508,16 @@ public class Algorithm {
 
 					Course[] CoursetoBeInserted = new Course[1];
 					CoursetoBeInserted[0] = null;
-					try {
-						CoursetoBeInserted[0] = insert_entries.stream().filter(cand -> cand.getValue().constraintsTimeslot.contains(new KeyDayTime(crossDay_B, crossTimeslot_B)) == false && cand.getValue().constraintsRoom.contains(avail.getKey().getRoom()) == false).filter(those -> Collections.disjoint(those.getValue().belongsToCurricula, bannedCurr) && bannedTeacher.contains(those.getValue().teacherID) == false).findAny().get().getValue();
-					} catch (Exception ex) { // catch NullPointerExceptions
-						CoursetoBeInserted[0] = null;
-						//Debug
-						//System.out.println("From parent a there are no courses which can be inserted under the circumstances");
-					}
+
+                    List<Map.Entry<KeyDayTimeRoom,Course>> insert_candidates = insert_entries.stream().filter(cand -> cand.getValue().constraintsTimeslot.contains(new KeyDayTime(crossDay_B, crossTimeslot_B)) == false && cand.getValue().constraintsRoom.contains(avail.getKey().getRoom()) == false).filter(those -> Collections.disjoint(those.getValue().belongsToCurricula, bannedCurr) && bannedTeacher.contains(those.getValue().teacherID) == false).collect(Collectors.toList());
+
+                    if (insert_candidates != null && insert_candidates.size() > 0) {
+                        CoursetoBeInserted[0] = insert_candidates.get(rangen.nextInt(insert_candidates.size())).getValue();
+                    }
+                    else {
+                        CoursetoBeInserted[0] = null;
+                        //System.out.println("From parent a there are no courses which can be inserted under the circumstances");
+                    }
 
 					if (CoursetoBeInserted[0] != null) {
 						child_b.put(avail.getKey(), CoursetoBeInserted[0]);
@@ -558,29 +534,23 @@ public class Algorithm {
 					Course course = remove_one_in_child_b.get(i);
 					//Debug
 					//	System.out.println(course.courseID + " searching for in B");
-					//	System.out.println("child_b contains the course "+course.courseID + " : " + child_b.containsValue(course));
+					//	System.out.println("child_b contains the course " + course.courseID + " : " + child_b.containsValue(course));
 
-					days:
-					for (int d = 0; d < numDays; d++) {
-						for (int t = 0; t < timeslotsPerDay; t++) {
-							for (int r = 0; r < numRooms; r++) {
-								KeyDayTimeRoom kdtro = new KeyDayTimeRoom(d, t, roomList.get(r));
-								Course resultat = child_b.get(kdtro);
-								if (resultat != null && resultat.equals(course)) {
-									//put null and break loop
-									child_b.put(kdtro, null);
-									break days;
-								}
-							}
-						}
-					}
+                    List<Map.Entry<KeyDayTimeRoom,Course>> remove_candidates =  child_b.entrySet().stream().filter(those -> those.getValue() != null).filter(those -> those.getValue().equals(course)).collect(Collectors.toList());
+                    if (remove_candidates != null && remove_candidates.size() > 0) {
+                        int whichOneRemove = rangen.nextInt(remove_candidates.size());
+                        child_b.put(remove_candidates.get(whichOneRemove).getKey(),null);
+                    }
 				}
 
 
 				/**
 				 *  try to insert all events from crossDay_B and crossTimeslot_B from parent B in parent A to produce child A
 				 */
-				child_a = parent_a;
+                for( Map.Entry<KeyDayTimeRoom,Course> entry : parent_a.entrySet()) {
+                    child_a.put(entry.getKey(),entry.getValue());
+                }
+
 				List<Course> remove_one_in_child_a = new ArrayList<>(50);
 				available_entries.clear();
 				// check first if/how many and which places are even available (course still null) in parent_b in the corresponding day and timeslots
@@ -588,7 +558,7 @@ public class Algorithm {
 				available_entries = correspondingDay_entries__.stream().filter(entry -> entry.getValue() == null).collect(Collectors.toList());
 
 				// select the entries which may be inserted
-				final List<Map.Entry<KeyDayTimeRoom, Course>> insert_entries__ = parent_b.entrySet().stream().filter(entry -> entry.getKey().getDay() == crossDay_B && entry.getKey().getTimeslot() == crossTimeslot_B).collect(Collectors.toList());
+				final List<Map.Entry<KeyDayTimeRoom, Course>> insert_entries__ = parent_b.entrySet().stream().filter(entry -> entry.getKey().getDay() == crossDay_B && entry.getKey().getTimeslot() == crossTimeslot_B).filter(entry->entry.getValue()!= null).collect(Collectors.toList());
 
 				// insert as many as possible, taking care not to violate any constraints related to the course
 				// consider also the other courses which are already present in the timeslot!
@@ -604,13 +574,15 @@ public class Algorithm {
 					});
 
 					Course[] CoursetoBeInserted = new Course[1];
-					try {
-						CoursetoBeInserted[0] = insert_entries__.stream().filter(cand -> cand.getValue().constraintsTimeslot.contains(new KeyDayTime(crossDay_A, crossTimeslot_A)) == false && cand.getValue().constraintsRoom.contains(avail.getKey().getRoom()) == false).filter(those -> Collections.disjoint(those.getValue().belongsToCurricula, bannedCurr) && bannedTeacher.contains(those.getValue().teacherID) == false).findAny().get().getValue();
-					} catch (Exception ex) { // catch NullPointerExceptions
-						CoursetoBeInserted[0] = null;
-						//Debug
-						//System.out.println("From parent b there are no courses which can be inserted under the circumstances");
-					}
+                    List<Map.Entry<KeyDayTimeRoom,Course>> insert_candidates = insert_entries__.stream().filter(cand -> cand.getValue().constraintsTimeslot.contains(new KeyDayTime(crossDay_A, crossTimeslot_A)) == false && cand.getValue().constraintsRoom.contains(avail.getKey().getRoom()) == false).filter(those -> Collections.disjoint(those.getValue().belongsToCurricula, bannedCurr) && bannedTeacher.contains(those.getValue().teacherID) == false).collect(Collectors.toList());
+
+                    if (insert_candidates != null && insert_candidates.size() > 0) {
+                        CoursetoBeInserted[0] = insert_candidates.get(rangen.nextInt(insert_candidates.size())).getValue();
+                    }
+                    else {
+                        CoursetoBeInserted[0] = null;
+                        //System.out.println("From parent a there are no courses which can be inserted under the circumstances");
+                    }
 					if (CoursetoBeInserted[0] != null) {
 						child_a.put(avail.getKey(), CoursetoBeInserted[0]);
 						//Debug
@@ -618,38 +590,32 @@ public class Algorithm {
 						//removing the duplicate : due to the insertion above, one lecture must be taken away -> done randomly . for the moment save in list
 						remove_one_in_child_a.add(CoursetoBeInserted[0]);
 					}
-				});
+				}); // for each avail
 
-				// remove the duplicates
-				for (int i = 0; i < remove_one_in_child_a.size(); i++) {
-					Course course = remove_one_in_child_a.get(i);
-					//Debug
-					//System.out.println(course.courseID + " searching for in A");
-					//System.out.println("child_a contains the course "+course.courseID + " : " + child_a.containsValue(course));
+                // remove the duplicates
+                for (int i = 0; i < remove_one_in_child_a.size(); i++) {
+                    Course course = remove_one_in_child_a.get(i);
+                    //Debug
+                    //	System.out.println(course.courseID + " searching for in B");
+                    //	System.out.println("child_b contains the course " + course.courseID + " : " + child_b.containsValue(course));
 
-					days:
-					for (int d = 0; d < numDays; d++) {
-						for (int t = 0; t < timeslotsPerDay; t++) {
-							for (int r = 0; r < numRooms; r++) {
-								KeyDayTimeRoom kdtro = new KeyDayTimeRoom(d, t, roomList.get(r));
-								Course resultat = child_a.get(kdtro);
-								if (resultat != null && resultat.equals(course)) {
-									//put null and break loop
-									child_a.put(kdtro, null);
-									break days;
-								}
-							}
-						}
-					}
-				}
+                    List<Map.Entry<KeyDayTimeRoom,Course>> remove_candidates =  child_a.entrySet().stream().filter(those-> those.getValue() != null).filter(those -> those.getValue().equals(course)).collect(Collectors.toList());
+                    if (remove_candidates != null && remove_candidates.size() > 0) {
+                        int whichOneRemove = rangen.nextInt(remove_candidates.size());
+                        child_a.put(remove_candidates.get(whichOneRemove).getKey(),null);
+                    }
+                }
 
 				long crossover_done = System.nanoTime() - crossover_start;
 				//System.out.println((double) crossover_done / 1000000000.0 + " seconds for the crossover algorithm");
 			} // end crossover rate
 
 
+            //Debug
+            //System.out.println(populationGeneration.ANSI_CYAN + " Crossover done " + populationGeneration.ANSI_RESET);
 
-			int whichNbs;
+
+            int whichNbs = 1;
 			/**
 			 *
 			 *  -------------- MUTATION --------------
@@ -661,7 +627,7 @@ public class Algorithm {
 				/**
 				 * apply mutation operator to the children and accept the solution regardless of its quality
 				 */
-				whichNbs = 1 + rangen.nextInt(9);
+				whichNbs = 1 + rangen.nextInt(3);
 				child_b = applyNBS(child_b,whichNbs);
 				whichNbs = 1 + rangen.nextInt(9);
 				child_a = applyNBS(child_a,whichNbs);
@@ -678,11 +644,15 @@ public class Algorithm {
 			/**
 			 * select a NBS which is not in the tabu list
 			 */
-			do {
-				whichNbs = 1 + rangen.nextInt(9);
-				//Debug
-				//System.out.println("Stuck trying to choose the Nbs to use..");
-			} while (TabuList.contains(whichNbs));
+            if (CanSelect == true) {
+                do {
+                  whichNbs = 1 + rangen.nextInt(3);
+
+                    //Debug
+                    //System.out.println("Stuck trying to choose the Nbs to use..");
+                } while (TabuList.contains(whichNbs));
+            }
+
 
 			/**
 			 * apply whichNbs to the children to produce the grandchildren
@@ -694,27 +664,37 @@ public class Algorithm {
 			 * obtain minimum penalty solution from the children and grandchildren
 			 */
 
-			Map<Map<KeyDayTimeRoom,Course>,Integer> offspring_score_map = new HashMap<>(4);
+            List<SolutionScore> offspring_score_list = new ArrayList<>(4);
+
 			int score_child_a = calcPenaltyScore(child_a);
 			int score_child_b = calcPenaltyScore(child_b);
 			int score_grandchild_a = calcPenaltyScore(grandchild_a);
 			int score_grandchild_b = calcPenaltyScore(grandchild_b);
 
-			offspring_score_map.put(child_a,score_child_a);
-			offspring_score_map.put(child_a,score_child_b);
-			offspring_score_map.put(child_a, score_grandchild_a);
-			offspring_score_map.put(child_a, score_grandchild_b);
+			offspring_score_list.add(new SolutionScore(child_a, score_child_a));
+            offspring_score_list.add(new SolutionScore(child_a, score_child_b));
+            offspring_score_list.add(new SolutionScore(child_a, score_grandchild_a));
+            offspring_score_list.add(new SolutionScore(child_a, score_grandchild_b));
 
-			int mini = Collections.min(offspring_score_map.values());
-			Map<KeyDayTimeRoom,Course> candidate = offspring_score_map.entrySet().stream().filter(entry -> entry.getValue() == mini).findAny().get().getKey();
+
+            int[] mini = new int[1];
+            mini[0] = 10000;
+            for (SolutionScore ss : offspring_score_list) {
+                int ssscore = ss.getScore();
+                mini[0] = (ssscore<mini[0])? ssscore : mini[0];
+            }
+
+			Map<KeyDayTimeRoom,Course> candidate = offspring_score_list.stream().filter(entry -> entry.getScore() == mini[0]).findAny().get().getSolution();
 
 			/**
 			 * if the obtained solution is better than the old S_best, then make it to S_best
 			 */
-			if (mini < S_best_Min[0]) {
+			if (mini[0] < S_best_Min[0]) {
 				S_best = candidate;
-				S_best_Min[0] = mini;
+				S_best_Min[0] = mini[0];
 				CanSelect = false;
+                //Debug
+                System.out.println(populationGeneration.ANSI_PURPLE + "score of Sbest "+S_best_Min[0] + populationGeneration.ANSI_RESET);
 			}
 			else {
 				CanSelect = true;
@@ -727,33 +707,46 @@ public class Algorithm {
 			 */
 
 		//solution_score_map
-			solution_score_map.put(child_a,score_child_a);
-			solution_score_map.put(child_b,score_child_b);
-			solution_score_map.put(grandchild_a,score_grandchild_a);
-			solution_score_map.put(grandchild_b,score_grandchild_b);
+			solution_score_list.add(new SolutionScore(child_a, score_child_a));
+			solution_score_list.add(new SolutionScore(child_b, score_child_b));
+			solution_score_list.add(new SolutionScore(grandchild_a, score_grandchild_a));
+            solution_score_list.add(new SolutionScore(grandchild_b, score_grandchild_b));
+
+
 		//now remove the four weakest
-			do {
-				Integer lowest_score = Collections.min(solution_score_map.values());
+            while (solution_score_list.size() > popSize) {
+
+                int[] max = new int[1];
+                max[0] = 0;
+                for (SolutionScore ss : solution_score_list) {
+                    int ssscore = ss.getScore();
+                    max[0] = (ssscore>max[0])? ssscore : max[0];
+                }
+
 				//potential nullpointer exception if no key is found for the lowest score
-				Map<KeyDayTimeRoom,Course> key_lowest_score = solution_score_map.entrySet().stream().filter(entry -> entry.getValue() == lowest_score).findAny().get().getKey();
-				solution_score_map.remove(key_lowest_score,lowest_score);
-				//Debug
-				//System.out.println("Removing weakest solution in ");
-			} while (solution_score_map.size() > popSize);
+				int hashCode_max = solution_score_list.stream().filter(entry -> entry.getScore() == max[0]).findAny().get().hashCode();
+
+                outer : for(int w=0;w<solution_score_list.size();w++) {
+                    if (solution_score_list.get(w).hashCode() == hashCode_max) {
+                       solution_score_list.remove(w);
+                        break outer;
+                    }
+                }
+			}
+
 
 			 endTime = System.nanoTime();
-			//Debug
-		//	System.out.println("Runtime : " + (endTime - start_time) / 1000000000.0 + " seconds" );
-		} while (endTime - start_time < 100*1000000000.0 ); //end of do while
+		} while (endTime - start_time < 120*1000000000.0 ); //end of do while
 
 		// Debug - See Timetable and its score!
-		/*System.out.println("-------------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------------");
 		System.out.println("-------------------------------------------------------------------------------");
 		System.out.println("-------------------------------------------------------------------------------");
 		System.out.println("-------------------------------------------------------------------------------");
 		System.out.println("-------------------------------------------------------------------------------");
 		System.out.println("-------------------------------------------------------------------------------\n\n\n");
 		System.out.print("The score of the winning solution after 100 seconds is : " + Integer.toString(calcPenaltyScore(S_best)) );
+
 	     roomList.stream().forEach(roomie -> {
 			 String RoomieID = roomie.getRoomID();
 			 while (RoomieID.chars().count() < 5) {
@@ -770,10 +763,10 @@ public class Algorithm {
 							 cursoID += " ";
 						 }
 					 }
-					 System.out.print(cursoID + "    ");
+					 System.out.print(populationGeneration.ANSI_GREEN + cursoID + "    ");
 				 }
 		}
-		}); // end roomie */
+		}); // end roomie
 
 
 	}

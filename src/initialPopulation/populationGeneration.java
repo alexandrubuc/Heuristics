@@ -54,7 +54,7 @@ public class populationGeneration {
 	 public static int timeslotsPerDay;
 	 public static int dailyLecturesMin;
 	 public static int dailyLecturesMax;
-	 public static int popSize = 1;
+	 public static int popSize = 6;
 	 public static int numCourses;
 
 	 public static Map<KeyDayTimeRoom,Course> tempSolution = new HashMap<>(1000);
@@ -79,7 +79,6 @@ public class populationGeneration {
 		aps = 0;
 		apd = 0;
 		// from the entries where the course has not yet been set, return those where the teacher and the curricula to which the course belongs are not banned from the timeslots
-		//System.out.println("tempSoll entries still with value null : "+ tempSol.entrySet().stream().filter(entry -> entry.getValue() == null).count());
 		tempSol.entrySet().stream().filter(entry -> entry.getValue() == null).filter(entry -> (course_i.constraintsRoom.contains(entry.getKey().assignedRoom) == false) && (course_i.constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot))==false)).forEach((entry)-> {
 			int Day = entry.getKey().getDay();
 			int Timeslot = entry.getKey().getTimeslot();
@@ -162,24 +161,6 @@ public class populationGeneration {
 		System.out.println((double) estimatedTime / 1000000000.0 + " seconds for importing the dataset from XML\n");
 			initializeTempSolutionToNull();
 
-
-		//Debug
-		//System.out.println(tempSolution.size());
-		//tempSolution.keySet().forEach(key -> {if (key.getRoom().getRoomID().equals("r36")) {System.out.println(key.Day +" "+ key.Timeslot +" " + key.getRoom().getRoomID() + " " + key.getRoom().getRoomCapacity() + " " + key.getRoom().getBuilding());}});
-		//System.out.println(tempSolution.get(new KeyDayTimeRoom(1, 3, new Room("r36",42,"0"))).toString());
-		//System.out.println("in listRooms searched for r36 and found "+listRooms.stream().filter(room -> room.getRoomID().equals("r36")).findAny().get().toString());
-		//System.out.println("size of listRooms " + listRooms.size());
-		//listRooms.stream().forEach(room -> System.out.println(room.getRoomID() + " "+room.getRoomID().toCharArray().length + " " + room.getRoomCapacity() + " " + room.getBuilding()));
-		//System.out.println("listRooms contains the needed room -> "+listRooms.contains(new Room("Er1", 70, "0")));
-		//System.out.println(listRooms.stream().filter(room -> room.getRoomCapacity() == 336).count());
-		//System.out.println(tempSolution.containsKey(new KeyDayTimeRoom(1, 3, new Room("r36", 42, "0"))));
-		//tempSolution.entrySet().stream().filter(entry -> entry.getKey().assignedRoom.getRoomID().equals("r36")).forEach(entry -> System.out.println(entry.getKey().Timeslot));
-		//tempSolution.entrySet().stream().filter(entry -> entry.getValue() == null).forEach(entry -> System.out.println("yeah"));
-        //int[] ul = new int[1];
-        // ul[0] = 0;
-        //listCourses.forEach( course -> ul[0]+= course.numberOfUnassignedLectures);
-        //System.out.println("unassigned total -> "+ ul[0]);
-
 			long startTimeWholePopulation = System.nanoTime();
 
 		 /**
@@ -206,11 +187,6 @@ public class populationGeneration {
 			 });
 		 });
 
-		 //Debug
-		  /*  listCourses.stream().forEach(kurs -> {
-				System.out.println("unassigned " + kurs.numberOfUnassignedLectures + " total "+ kurs.numberOfLectures);
-			}); */
-
 
          /**
           * Generation of tempSolution, one entry of the population
@@ -219,19 +195,10 @@ public class populationGeneration {
          while ( listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).count() > 0 )
          {
 
-             //Debug
-         int[] howManyLeft = new int[1];
-         howManyLeft[0] = 0;
-         listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).forEach(course -> {
-             howManyLeft[0] += course.numberOfUnassignedLectures;
-         });
-             //Debug
-         //System.out.println(ANSI_PURPLE + "lectures left -> " + howManyLeft[0] + ANSI_RESET);
-
-
          /**
           * insert hier ABBRUCH BEDINGUNG FALLS KEINE WEITERE LECTURES ASSIGNED WERDEN KÖNNEN	 
           */
+
 		 /***************** Choose a course according to HR 1 *****************/
 		 /***************** courses with small numbers of available periods and large number of unassigned lectures have priority *****************/
 		 
@@ -252,29 +219,10 @@ public class populationGeneration {
 		     course_apd_i.putIfAbsent(course, apd_aps[0]/Math.sqrt(unassignedLectures));
 		     course_aps_i.putIfAbsent(course, apd_aps[1]/Math.sqrt(unassignedLectures));
 		 });		 
-		 
-		 // DEBUG
-		// System.out.println("Size of course_apd_i map is " + course_apd_i.size() + " Size of course_aps_i map is "+course_aps_i.size() );
-		 //System.out.println(listCourses.get(23).courseID);
-		 // System.out.println("constraints of course c0163 containts room DS1 " + listCourses.get(23).constraintsRoom.contains(new Room("Er2",70,"0")));
-		//listCourses.get(15).constraintsRoom.stream().forEach(entry -> System.out.println(entry.getRoomID()));
-			//System.out.println(listCourses.stream().filter( entry -> entry.constraintsRoom.contains(new Room("DS1",(Integer) 60,"0"))).count());
-           // System.out.println(listCourses.get(15).constraintsTimeslot.contains(new KeyDayTime(1,2)));
-
 
              /**
 			  *  choose  the course with the smallest value of apd_i(X)/sqrt(nl_i(X))
 			  */
-
-
-
-		//Debug
-	 	/*System.out.println("Values in apd");
-		course_apd_i.entrySet().stream().forEach(entry -> System.out.print(ANSI_RED + new DecimalFormat("#.##").format(entry.getValue()) + " " + ANSI_RESET));
-             System.out.println("\n");
-		System.out.println("Values in aps");
-		course_aps_i.entrySet().stream().forEach(entry -> System.out.print(ANSI_GREEN + new DecimalFormat("#.##").format(entry.getValue()) + " "+ ANSI_RESET));
-		System.out.println("\n");*/
 
 			 // find minimum for apd first
 		 min_apd = Collections.min(course_apd_i.values());
@@ -289,18 +237,7 @@ public class populationGeneration {
 				 tieCourses_apd.add(entry.getKey());
 			 }
 		 }
-		 
-		//DEBUG
-		/* if (tieCourses_apd.size() == 0 ) {
-		 System.out.println("Achtung size of tieCourses_apd is zero, but min_apd is "+ min_apd + " and course_apd_i still has "+ course_apd_i.size()+ " elements");
-		 System.out.println("tieCourses_apd(0) is "+tieCourses_apd.get(0));
-		 }
-		 else {
-			 System.out.println("Size of tieCourses_apd is "+tieCourses_apd.size());
-		 }*/
-		 
-		 
-		 
+
 		 
 		// if tie between courses, choose the course with smallest value of aps_i(X)/sqrt(nl_i(X))
 		 if (tieCourses_apd.size() > 1 ) {
@@ -314,16 +251,7 @@ public class populationGeneration {
 					 tieCourses_aps.add(entry.getKey());
 				 }
 			 }
-			 
-			 //DEBUG
-			/* if (tieCourses_aps.size() == 0) {
-			 System.out.println("Achtung size of tieCourses_aps is zero, but min_apd is "+ min_aps);
-			 }
-			 else {
-				 System.out.println("Size of tieCourses_aps is "+tieCourses_aps.size());
-			 } */
-			 
-			 
+
 			 if (tieCourses_aps.size()>1) {
 				 // still courses with ties even for aps, now decide based on number of courses that share common students or teacher with course c_i
 				 // that means, the course with max : curricula to which it belongs x courses in curricula
@@ -349,8 +277,6 @@ public class populationGeneration {
 					// find maximum for con_f_i first
 				    max = (double) Collections.max(con_f_i.values());
 
-                 //con_f_i.entrySet().stream().forEach(entry -> System.out.print(entry.getValue() + " "));
-                 //System.out.println("\n***************** -> " + Collections.max(con_f_i.values()));
 
                 List<Course> tie_after_con_f_i = new ArrayList<>(con_f_i.size());
 
@@ -368,8 +294,7 @@ public class populationGeneration {
                      System.out.println("Something really weird going on, no course could be assigned even after con_f_i!");
                      selectedCourse = null;
                  }
-				  //DEBUG
-					// System.out.println("Achtung NO max con_f_i, size of con_f_i is " + con_f_i.size() + " max is "+ max + " selectedCourse con_f_i ist "+con_f_i.get(selectedCourse));
+
 				 }
 			 else{
 				 //only one element with smallest aps_i, select course
@@ -392,35 +317,7 @@ public class populationGeneration {
          timeslotRoom_g_jk_map.clear();
 		 Course[] chosenCourse = new Course[1];
 		 chosenCourse[0] = selectedCourse;
-			 //Debug
-		 //System.out.print(ANSI_CYAN + selectedCourse.courseID+ " ");
-		 
-		 // for each available period-room pair choose the pair with the smallest value of g(j,k) = k_1 * uac_i_j(X) + k_2 * Delta_f_s(i,j,k)
 
-
-		// List<Map.Entry<KeyDayTimeRoom, Course>> course_still_null = tempSolution.entrySet().stream().filter( kdtr -> kdtr.getValue() == null).collect(Collectors.toList());
-
-         //Debug
-            // System.out.println(ANSI_GREEN + course_still_null.size() + ANSI_RESET);
-
-		 //Debug
-         /* for(Entry e:course_still_null) {
-             if (e.getValue() != null) {
-                 System.out.println("sht!!");
-             }
-         }*/
-/*
-		 if(chosenCourse[0] == null) {
-		 System.out.println("*********** HR1 CHOSEN COURSE IS NULL " + chosenCourse[0] == null );
-		 }
-         List<Map.Entry<KeyDayTimeRoom, Course>> course_still_null_ = null;
-		 if (chosenCourse[0].constraintsRoom != null ) {
-           course_still_null_=  course_still_null.stream().filter(entry -> (chosenCourse[0].constraintsRoom.contains(entry.getKey().assignedRoom) == false)).collect(Collectors.toList());
-		 }
-             List<Map.Entry<KeyDayTimeRoom, Course>> course_still_null__ = null;
-		 if (chosenCourse[0].constraintsTimeslot != null ) {
-             course_still_null__ = course_still_null_.stream().filter(entry -> chosenCourse[0].constraintsTimeslot.contains(new KeyDayTime(entry.getKey().Day,entry.getKey().Timeslot)) == false).collect(Collectors.toList());
-		 }   */
 
           Map<KeyDayTimeRoom, Course> go_through_these = new HashMap<>();
              go_through_these.clear();
@@ -436,17 +333,9 @@ public class populationGeneration {
          }
 
 
-         //Debug
-         //System.out.println("Still free places for the course "+ chosenCourse[0].courseID +" -> " + course_still_null.size());
-         /* if(chosenCourse[0].courseID == 1074) {
-             System.out.println("Count of courses with unassigned lectures : "+listCourses.stream().filter(course -> course.numberOfUnassignedLectures > 0).count());
-         }*/
-
-
             if (go_through_these == null || go_through_these.size() <= 0) {
                 System.out.println("Houston we have a problem...");
             }
-
 
 			go_through_these.entrySet().stream().forEach(entry -> {
                 //check for feasibility of entry, where teacher or curriculum banned
@@ -566,11 +455,6 @@ public class populationGeneration {
 					 SecureRandom rangen = new SecureRandom();
 					 chosen_kdtr = zwischenSpeicher.get(rangen.nextInt(zwischenSpeicher.size())).getKey();
 				 }
-             //Debug
-              //System.out.println("chosen_kdtr : " + chosen_kdtr.toString());
-             //implement the feasible lecture insertion
-
-                 //System.out.println(tempSolution.containsKey(chosen_kdtr));
 
 				 if(chosen_kdtr != null && (tempSolution.get(chosen_kdtr) == null)) {
                      try {
@@ -617,16 +501,7 @@ public class populationGeneration {
                list_rooms = Funktionen.removeDuplicatesRoom(list_rooms);
                course_rooms_map.put(chosenCourse[0], list_rooms);
 
-
-               //Debug
-               //System.out.println(" FIRST : Number of unassigned lectures of course "+ chosenCourse[0].courseID +" : "+ chosenCourse[0].numberOfUnassignedLectures);
-
                listCourses.get(listCourses.indexOf(chosenCourse[0])).numberOfUnassignedLectures -= 1;
-
-               //Debug
-               // System.out.println(" Info : the Course takes place in " + chosenCourse[0].belongsToCurricula.size() + " curricula");
-               // System.out.println(" SECOND : Number of unassigned lectures of course "+ chosenCourse[0].courseID +" : "+ chosenCourse[0].numberOfUnassignedLectures);
-
 
 
                //tabuTimeslot_teacher
@@ -638,8 +513,6 @@ public class populationGeneration {
                    bannedTeachies.add(chosenCourse[0].teacherID);
                    tabuTimeslot_teacher.put(lastKDT, bannedTeachies);
                }
-		/* List<Integer> banned_teachers = tabuTimeslot_teacher.get(lastKDT);
-		 tabuTimeslot_teacher.put(lastKDT, banned_teachers);*/
 
                //tabuTimeslot_curriculum
                if (tabuTimeslot_curriculum.get(lastKDT) != null) {
@@ -649,8 +522,6 @@ public class populationGeneration {
                    banned_curricula.addAll(chosenCourse[0].belongsToCurricula);
                    tabuTimeslot_curriculum.put(lastKDT, banned_curricula);
                }
-		/* List<Curriculum> banned_curricula = tabuTimeslot_curriculum.get(lastKDT);
-		 tabuTimeslot_curriculum.put(lastKDT, banned_curricula); */
            }
              timeslotRoom_g_jk_map.clear();
 
@@ -670,20 +541,6 @@ public class populationGeneration {
 		System.out.print("\n");
 		} // for i<populationSize
 
-
-
-
-		// Debug
-		/*for(int g=1;g<population.size(); g++) {
-			Map<KeyDayTimeRoom,Course> mappy_1 = population.get(g);
-			Map<KeyDayTimeRoom,Course> mappy_2 = population.get(g-1);
-			if (  Funktionen.MapisEqual(mappy_1, mappy_2)) {
-				System.out.println("popGen : Solution "+g+" equals "+ (g-1));
-			}
-			else {
-				System.out.println("popGen:The solutions are not all the same!!!");
-			}
-		}*/
 
 		long estimatedTimeWholePopulation = System.nanoTime() - startTimeWholePopulation;
 		System.out.println((double) estimatedTimeWholePopulation / 1000000000.0 + " seconds for the whole population of " +popSize);
